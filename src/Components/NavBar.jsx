@@ -56,7 +56,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function PrimarySearchAppBar() {
+export default function PrimarySearchAppBar(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
@@ -84,12 +84,24 @@ export default function PrimarySearchAppBar() {
     window.localStorage.clear();
     setTimeout(() => {
       window.location.reload();
-    }, 2000);
+    }, 1000);
+  };
+
+  const redirectToLogin = () => {
+    props.history.push("/login");
+  };
+  const redirectToProfile = () => {
+    if (isLoggedIn) {
+      props.history.push("/profile");
+    } else {
+      redirectToLogin();
+    }
+    handleMenuClose();
   };
 
   const isLoggedIn = () => {
     const sidToken = window.localStorage.getItem("sid");
-    return sidToken === null || sidToken === "" || sidToken === undefined;
+    return !(sidToken === null || sidToken === "" || sidToken === undefined);
   };
 
   const menuId = "primary-search-account-menu";
@@ -109,8 +121,8 @@ export default function PrimarySearchAppBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      {!isLoggedIn() && <MenuItem onClick={handleLogout}>Logout</MenuItem>}
+      <MenuItem onClick={redirectToProfile}>Profile</MenuItem>
+      {isLoggedIn() && <MenuItem onClick={handleLogout}>Logout</MenuItem>}
     </Menu>
   );
 
@@ -131,13 +143,12 @@ export default function PrimarySearchAppBar() {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      {isLoggedIn() && (
-        <MenuItem>
+      {!isLoggedIn() && (
+        <MenuItem onClick={redirectToLogin}>
           <IconButton
             size="large"
             aria-label="show 4 new mails"
             color="inherit"
-            href="/login"
           >
             <AccountCircle />
           </IconButton>
@@ -155,10 +166,10 @@ export default function PrimarySearchAppBar() {
       <MenuItem>
         <IconButton
           size="large"
-          aria-label="show 17 new notifications"
+          aria-label="show 25 new notifications"
           color="inherit"
         >
-          <Badge badgeContent={17} color="error">
+          <Badge badgeContent={25} color="error">
             <NotificationsIcon />
           </Badge>
         </IconButton>
@@ -211,11 +222,11 @@ export default function PrimarySearchAppBar() {
           </Search>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
-            {isLoggedIn() && (
+            {!isLoggedIn() && (
               <Button
                 variant="contained"
                 style={{ marginRight: "20px" }}
-                href="/login"
+                onClick={redirectToLogin}
               >
                 Login
               </Button>
@@ -231,10 +242,10 @@ export default function PrimarySearchAppBar() {
             </IconButton>
             <IconButton
               size="large"
-              aria-label="show 17 new notifications"
+              aria-label="show 25 new notifications"
               color="inherit"
             >
-              <Badge badgeContent={17} color="error">
+              <Badge badgeContent={25} color="error">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
