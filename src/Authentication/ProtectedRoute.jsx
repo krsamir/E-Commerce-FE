@@ -7,7 +7,6 @@ export const ProtectedRoute = ({
   ...rest
 }) => {
   const role = window.localStorage.getItem("rid");
-  console.log(role);
   const token = window.localStorage.getItem("sid");
   if (typeof hasAuthority !== typeof []) {
     console.error("Please pass an array of Roles e.x. [ADMIN, USER]");
