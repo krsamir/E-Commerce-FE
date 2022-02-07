@@ -1,0 +1,11 @@
+.box-body {
+  /* height: 600px; */
+}
+.left {
+  background-color: #dcf0ef;
+  border-bottom-left-radius: 6px;
+  border-top-left-radius: 6px;
+}
+.right {
+  background-color: #fff;
+}
