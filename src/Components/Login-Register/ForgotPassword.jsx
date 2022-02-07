@@ -9,7 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 
-export default function ForgotPassword(props: any) {
+export default function ForgotPassword(props) {
   const [open, setOpen] = useState(false);
   const [sentStatus, setSentStatus] = useState(false);
   const [otp, setOtp] = useState("");
@@ -32,10 +32,7 @@ export default function ForgotPassword(props: any) {
     setOpen(false);
   };
 
-  const handleCloseEvent = (
-    event: React.MouseEventHandler<HTMLButtonElement>,
-    reason: string
-  ) => {
+  const handleCloseEvent = (event, reason) => {
     if (reason === "backdropClick") {
       return;
     } else {
@@ -77,7 +74,7 @@ export default function ForgotPassword(props: any) {
       });
   };
 
-  const otpHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const otpHandler = (e) => {
     const value = e.target.value;
     if (value.length <= 6) {
       setOtp(e.target.value);
@@ -171,6 +168,7 @@ export default function ForgotPassword(props: any) {
                 label="Password"
                 name="password"
                 value={password}
+                helperText={"Password should be minimum 8 characters."}
                 onChange={(e) => {
                   setPassword(e.target.value);
                 }}

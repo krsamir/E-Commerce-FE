@@ -6,8 +6,8 @@ const Home = lazy(() => import("./Components/Home"));
 const Register = lazy(() => import("./Components/Login-Register/Register"));
 const Login = lazy(() => import("./Components/Login-Register/Login"));
 const Profile = lazy(() => import("./Components/Profile/Profile"));
-const Verification = lazy(
-  () => import("./Components/Login-Register/Verification")
+const Verification = lazy(() =>
+  import("./Components/Login-Register/Verification")
 );
 
 function Routes() {

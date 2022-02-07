@@ -35,7 +35,7 @@ const validationSchema = yup.object({
     .oneOf([yup.ref("password"), null], "Passwords must match"),
 });
 
-function Copyright(props: any) {
+function Copyright(props) {
   return (
     <Typography
       variant="body2"
@@ -55,7 +55,7 @@ function Copyright(props: any) {
 
 const theme = createTheme();
 
-export default function SignUp(props: any) {
+export default function SignUp(props) {
   const [isDisabled, setDisabledState] = useState(false);
   const [email, setEmail] = useState("");
   const formik = useFormik({
@@ -84,7 +84,7 @@ export default function SignUp(props: any) {
             toast(
               () => (
                 <span>
-                  {e.response.data.reason.map((val: string, index: number) => (
+                  {e.response.data.reason.map((val, index) => (
                     <div key={index}>{val}</div>
                   ))}
                 </span>
@@ -116,7 +116,7 @@ export default function SignUp(props: any) {
   const [otp, setOtp] = useState("");
   const [otpError, setOtpError] = useState("");
 
-  const otpHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const otpHandler = (e) => {
     const value = e.target.value;
     if (value.length <= 6) {
       setOtp(e.target.value);

@@ -4,6 +4,12 @@ import "./App.css";
 import Routes from "./Routes.jsx";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 function App() {
+  if (process.env.NODE_ENV === "production") {
+    window.console.log = () => {};
+    window.console.info = () => {};
+    window.console.error = () => {};
+    window.console.warn = () => {};
+  }
   let theme = createTheme({
     typography: {},
     palette: {

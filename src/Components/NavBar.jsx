@@ -15,7 +15,7 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
-
+import Button from "@mui/material/Button";
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -57,10 +57,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function PrimarySearchAppBar() {
-  const [anchorEl, setAnchorEl] =
-    (React.useState < null) | (HTMLElement > null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
-    (React.useState < null) | (HTMLElement > null);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -82,6 +80,18 @@ export default function PrimarySearchAppBar() {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
+  const handleLogout = () => {
+    window.localStorage.clear();
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
+  };
+
+  const isLoggedIn = () => {
+    const sidToken = window.localStorage.getItem("sid");
+    return sidToken === null || sidToken === "" || sidToken === undefined;
+  };
+
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
@@ -99,8 +109,8 @@ export default function PrimarySearchAppBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem> */}
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      {!isLoggedIn() && <MenuItem onClick={handleLogout}>Logout</MenuItem>}
     </Menu>
   );
 
@@ -121,6 +131,19 @@ export default function PrimarySearchAppBar() {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
+      {isLoggedIn() && (
+        <MenuItem>
+          <IconButton
+            size="large"
+            aria-label="show 4 new mails"
+            color="inherit"
+            href="/login"
+          >
+            <AccountCircle />
+          </IconButton>
+          <p>Login</p>
+        </MenuItem>
+      )}
       <MenuItem>
         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
           <Badge badgeContent={4} color="error">
@@ -132,10 +155,10 @@ export default function PrimarySearchAppBar() {
       <MenuItem>
         <IconButton
           size="large"
-          aria-label="show 15 new notifications"
+          aria-label="show 17 new notifications"
           color="inherit"
         >
-          <Badge badgeContent={15} color="error">
+          <Badge badgeContent={17} color="error">
             <NotificationsIcon />
           </Badge>
         </IconButton>
@@ -188,12 +211,30 @@ export default function PrimarySearchAppBar() {
           </Search>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
+            {isLoggedIn() && (
+              <Button
+                variant="contained"
+                style={{ marginRight: "20px" }}
+                href="/login"
+              >
+                Login
+              </Button>
+            )}
             <IconButton
               size="large"
-              aria-label="show 15 new notifications"
+              aria-label="show 4 new mails"
               color="inherit"
             >
-              <Badge badgeContent={15} color="error">
+              <Badge badgeContent={4} color="error">
+                <MailIcon />
+              </Badge>
+            </IconButton>
+            <IconButton
+              size="large"
+              aria-label="show 17 new notifications"
+              color="inherit"
+            >
+              <Badge badgeContent={17} color="error">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
