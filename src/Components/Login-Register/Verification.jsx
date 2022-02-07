@@ -86,11 +86,9 @@ export default function Verification(props) {
             .then((res) => {
               if (res.data.status === 0) {
                 toast.error(res.data.message, { duration: 3000 });
-                if (res.data.message === "Token expired !!") {
-                  setTimeout(() => {
-                    props.history.push("/login");
-                  }, 2000);
-                }
+                setTimeout(() => {
+                  props.history.push("/login");
+                }, 3000);
               }
               if (res.data.status === 1) {
                 toast.success("Token Verification Successfull.");
@@ -108,6 +106,9 @@ export default function Verification(props) {
               } else {
                 toast.error("Some issue while OTP Verification!!");
               }
+              setTimeout(() => {
+                props.history.push("/login");
+              }, 3000);
             });
         } else {
           setTimeout(async () => {
@@ -117,6 +118,9 @@ export default function Verification(props) {
               .then((res) => {
                 if (res.data.status === 0) {
                   toast.error(res.data.message, { duration: 3000 });
+                  setTimeout(() => {
+                    props.history.push("/login");
+                  }, 3000);
                 }
                 if (res.data.status === 1) {
                   setopen(false);
@@ -138,10 +142,10 @@ export default function Verification(props) {
         }
       }, 200);
     } else {
-      toast.error("Invalid Request.", { duration: 6000 });
+      toast.error("Invalid Request.", { duration: 3000 });
       setTimeout(() => {
-        // props.history.push("/login");
-      }, 2000);
+        props.history.push("/login");
+      }, 3000);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
