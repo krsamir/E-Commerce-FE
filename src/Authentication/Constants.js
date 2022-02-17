@@ -43,26 +43,3 @@ export const stateNames = [
   "Lakshadweep",
   "Puducherry",
 ];
-
-export const address = [
-  {
-    area: "Bharat Prasad kirana store, Sahtoli,  Dumri, Buxar",
-    fullName: "BHARAT KALAVATI PRASAD",
-    houseno: "12",
-    landmark: "12",
-    mobileNumber: "7079583248",
-    pincode: 802120,
-    state: "Bihar",
-    townCity: "12",
-  },
-  {
-    area: "Bharat Prasad kirana store, Sahtoli,  Dumri, Buxar",
-    fullName: "BHARAT KALAVATI PRASAD",
-    houseno: "12",
-    landmark: "12",
-    mobileNumber: "7079583248",
-    pincode: 802120,
-    state: "Bihar",
-    townCity: "12",
-  },
-];

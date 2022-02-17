@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import NavBar from "../NavBar.jsx";
 import {
   TextField,
@@ -10,9 +10,10 @@ import {
 } from "@mui/material";
 import "../Style.css";
 import Grid from "@mui/material/Grid";
-import { stateNames, address } from "../../Authentication/Constants";
+import { stateNames } from "../../Authentication/Constants";
 import * as yup from "yup";
 import { useFormik } from "formik";
+import axios from "axios";
 
 const validationSchema = yup.object({
   fullName: yup.string().required("Name is mandatory field."),
@@ -38,11 +39,24 @@ const validationSchema = yup.object({
     .required("Pincode is required."),
 });
 function Profile(props) {
-  const value = {
-    name: "Samir Kumar",
-    email: "samirkumar2527@gmail.com",
-    mobileNo: 7079583248,
-  };
+  const [value, setValue] = useState(null);
+  useEffect(() => {
+    const getProfile = async () => {
+      await axios
+        .get("/user/profile")
+        .then((res) => {
+          console.log(res.data.data);
+          if (res.data.status === 1) {
+            setValue(res.data.data);
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    };
+    getProfile();
+  }, []);
+
   const formik = useFormik({
     initialValues: {
       fullName: "",
@@ -125,7 +139,7 @@ function Profile(props) {
                 variant="outlined"
                 fullWidth={true}
                 disabled={true}
-                value={value.name}
+                value={value === null ? "" : value.name}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
@@ -135,7 +149,7 @@ function Profile(props) {
                 variant="outlined"
                 fullWidth={true}
                 disabled={true}
-                value={value.email}
+                value={value === null ? "" : value.username}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
@@ -145,7 +159,7 @@ function Profile(props) {
                 variant="outlined"
                 fullWidth={true}
                 disabled={true}
-                value={value.mobileNo}
+                value={value === null ? "" : value.mobile}
               />
             </Grid>
           </Grid>
@@ -302,7 +316,12 @@ function Profile(props) {
                     />
                   </Grid>
                   <Grid item xs={12} sm={6} md={4}>
-                    <Button type="submit" variant="outlined" fullWidth={true}>
+                    <Button
+                      type="submit"
+                      variant="outlined"
+                      fullWidth={true}
+                      style={{ height: "55px" }}
+                    >
                       Save Details
                     </Button>
                   </Grid>
