@@ -330,64 +330,68 @@ function Profile(props) {
                 </IconButton>
               )}
             </div>
-            <div className="address hor" style={{ flexWrap: "wrap" }}>
-              {value &&
-                value.Addresses.map(
-                  ({
-                    id,
-                    fullName,
-                    houseno,
-                    landmark,
-                    mobileNumber,
-                    pincode,
-                    state,
-                    townCity,
-                    updatedAt,
-                    area,
-                  }) => (
-                    <div key={id} className="addressCard">
-                      <div className="partA">
-                        <div className="nameDiv hor">
-                          <div className="fullName">{fullName}</div>
-                          <EditIcon
-                            className="pointer"
-                            onClick={() =>
-                              handleEdit({
-                                id,
-                                fullName,
-                                houseno,
-                                landmark,
-                                mobileNumber,
-                                pincode,
-                                state,
-                                townCity,
-                                updatedAt,
-                                area,
-                              })
-                            }
-                          />
-                          <DeleteIcon
-                            className="pointer"
-                            onClick={() => handleDelete(id)}
-                          />
+            <div className="address">
+              <Grid container spacing={2}>
+                {value &&
+                  value.Addresses.map(
+                    ({
+                      id,
+                      fullName,
+                      houseno,
+                      landmark,
+                      mobileNumber,
+                      pincode,
+                      state,
+                      townCity,
+                      updatedAt,
+                      area,
+                    }) => (
+                      <Grid item xs={12} sm={6} md={4}>
+                        <div key={id} className="addressCard">
+                          <div className="partA">
+                            <div className="nameDiv hor">
+                              <div className="fullName">{fullName}</div>
+                              <EditIcon
+                                className="pointer"
+                                onClick={() =>
+                                  handleEdit({
+                                    id,
+                                    fullName,
+                                    houseno,
+                                    landmark,
+                                    mobileNumber,
+                                    pincode,
+                                    state,
+                                    townCity,
+                                    updatedAt,
+                                    area,
+                                  })
+                                }
+                              />
+                              <DeleteIcon
+                                className="pointer"
+                                onClick={() => handleDelete(id)}
+                              />
+                            </div>
+                            <div className="mobile">{mobileNumber}</div>
+                            <div className="addressLine1">
+                              {houseno}, {area}, {landmark}, {townCity}
+                            </div>
+                            <div className="addressline2">
+                              {state}-{pincode}
+                            </div>
+                          </div>
+                          <div className="partB">
+                            <div className="lastUpdated">
+                              Lastupdated on -{" "}
+                              {new Date(updatedAt).toLocaleString()}
+                            </div>
+                          </div>
                         </div>
-                        <div className="mobile">{mobileNumber}</div>
-                        <div className="addressLine1">
-                          {houseno}, {area}, {landmark}, {townCity}
-                        </div>
-                        <div className="addressline2">
-                          {state}-{pincode}
-                        </div>
-                      </div>
-                      <div className="partB">
-                        <div className="lastUpdated">
-                          Lastupdated on -{" "}
-                          {new Date(updatedAt).toLocaleString()}
-                        </div>
-                      </div>
-                    </div>
-                  )
-                )}
+                      </Grid>
+                    )
+                  )}
+              </Grid>
             </div>
 
             <div className="lowerBox-address">
