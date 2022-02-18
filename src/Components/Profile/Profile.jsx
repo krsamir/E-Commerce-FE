@@ -7,6 +7,7 @@ import {
   Select,
   MenuItem,
   Button,
+  IconButton,
 } from "@mui/material";
 import "../Style.css";
 import Grid from "@mui/material/Grid";
@@ -14,6 +15,11 @@ import { stateNames } from "../../Authentication/Constants";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import axios from "axios";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import RemoveIcon from "@mui/icons-material/Remove";
+import toast, { Toaster } from "react-hot-toast";
 
 const validationSchema = yup.object({
   fullName: yup.string().required("Name is mandatory field."),
@@ -45,12 +51,30 @@ function Profile(props) {
       await axios
         .get("/user/profile")
         .then((res) => {
-          console.log(res.data.data);
           if (res.data.status === 1) {
             setValue(res.data.data);
+          } else {
+            toast.error("Caught into some issue while fetching profile.", {
+              duration: 6000,
+              position: "top-center",
+              style: {
+                borderRadius: "10px",
+                background: "#333",
+                color: "#fff",
+              },
+            });
           }
         })
         .catch((e) => {
+          toast.error("Caught into some issue while fetching profile.", {
+            duration: 6000,
+            position: "top-center",
+            style: {
+              borderRadius: "10px",
+              background: "#333",
+              color: "#fff",
+            },
+          });
           console.log(e);
         });
     };
@@ -59,6 +83,7 @@ function Profile(props) {
 
   const formik = useFormik({
     initialValues: {
+      id: null,
       fullName: "",
       mobileNumber: "",
       houseno: "",
@@ -70,55 +95,161 @@ function Profile(props) {
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      console.log(values);
-      // const { username } = values;
-      // setEmail(username);
-      // await axios
-      //   .post("/auth/register", values)
-      //   .then((response) => {
-      //     if (response.data.status === 1) {
-      //       toast.success(response.data.message, { duration: 6000 });
-      //       formik.resetForm();
-      //       setDisabledState(true);
-      //     }
-      //   })
-      //   .catch((e) => {
-      //     if (typeof e.response.data.reason === typeof []) {
-      //       toast(
-      //         () => (
-      //           <span>
-      //             {e.response.data.reason.map((val, index) => (
-      //               <div key={index}>{val}</div>
-      //             ))}
-      //           </span>
-      //         ),
-      //         {
-      //           duration: 9000,
-      //           position: "top-center",
-      //           style: {
-      //             borderRadius: "10px",
-      //             background: "#333",
-      //             color: "#fff",
-      //           },
-      //         }
-      //       );
-      //     } else {
-      //       toast.error(e.response.data.message, {
-      //         duration: 6000,
-      //         position: "top-center",
-      //         style: {
-      //           borderRadius: "10px",
-      //           background: "#333",
-      //           color: "#fff",
-      //         },
-      //       });
-      //     }
-      //   });
+      const { id } = values;
+      if (id === null) {
+        createAddress(values);
+      } else {
+        updateAddress(values);
+      }
     },
   });
+  const createAddress = async (values) => {
+    if (value) {
+      if (value.Addresses.length > 4) {
+        toast.success("Only 5 Addresses can be saved.");
+      } else {
+        delete values.id;
+        await axios
+          .post("/user/address", values)
+          .then((res) => {
+            if (res.data.status === 1) {
+              toast.success(res.data.message, { duration: 6000 });
+              const data = value;
+              setValue({
+                ...data,
+                ...data.Addresses.unshift(res.data.user),
+              });
+              formik.resetForm();
+              setShow(false);
+            } else {
+              toast.error(res.data.message, {
+                duration: 6000,
+                position: "top-center",
+                style: {
+                  borderRadius: "10px",
+                  background: "#333",
+                  color: "#fff",
+                },
+              });
+            }
+          })
+          .catch((e) => {
+            toast.error("Caught into some issue while adding address.", {
+              duration: 6000,
+              position: "top-center",
+              style: {
+                borderRadius: "10px",
+                background: "#333",
+                color: "#fff",
+              },
+            });
+          });
+      }
+    }
+  };
+  const updateAddress = async (values) => {
+    await axios
+      .put("/user/address", values)
+      .then((res) => {
+        if (res.data.status === 1) {
+          toast.success(res.data.message, { duration: 6000 });
+          setShow(false);
+          formik.resetForm();
+          const data = value;
+          const idArray = data.Addresses.map((val) => val.id);
+          const indexedElement = idArray.indexOf(values.id);
+          data.Addresses.splice(indexedElement, 1, values);
+          setValue({ ...data, Addresses: data.Addresses });
+        } else {
+          toast.error("Caught into some issue while deleting address.", {
+            duration: 6000,
+            position: "top-center",
+            style: {
+              borderRadius: "10px",
+              background: "#333",
+              color: "#fff",
+            },
+          });
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        toast.error("Caught into some issue while deleting address.", {
+          duration: 6000,
+          position: "top-center",
+          style: {
+            borderRadius: "10px",
+            background: "#333",
+            color: "#fff",
+          },
+        });
+      });
+  };
+  const [show, setShow] = useState(false);
+  const handleDelete = async (id) => {
+    await axios
+      .delete(`/user/address/${id}`)
+      .then((res) => {
+        if (res.data.status === 1) {
+          const data = value;
+          const idArray = data.Addresses.map((val) => val.id);
+          const indexedElement = idArray.indexOf(id);
+          data.Addresses.splice(indexedElement, 1);
+          setValue({ ...data, Addresses: data.Addresses });
+          toast.success(res.data.message, { duration: 6000 });
+          setShow(false);
+          formik.resetForm();
+        } else {
+          toast.error("Caught into some issue while deleting address.", {
+            duration: 6000,
+            position: "top-center",
+            style: {
+              borderRadius: "10px",
+              background: "#333",
+              color: "#fff",
+            },
+          });
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        toast.error("Caught into some issue while deleting address.", {
+          duration: 6000,
+          position: "top-center",
+          style: {
+            borderRadius: "10px",
+            background: "#333",
+            color: "#fff",
+          },
+        });
+      });
+  };
+  const handleEdit = ({
+    id,
+    area,
+    fullName,
+    houseno,
+    landmark,
+    mobileNumber,
+    pincode,
+    state,
+    townCity,
+  }) => {
+    formik.setFieldValue("fullName", fullName, true);
+    formik.setFieldValue("houseno", houseno, true);
+    formik.setFieldValue("landmark", landmark, true);
+    formik.setFieldValue("mobileNumber", mobileNumber, true);
+    formik.setFieldValue("pincode", pincode, true);
+    formik.setFieldValue("state", state, true);
+    formik.setFieldValue("townCity", townCity, true);
+    formik.setFieldValue("id", id, true);
+    formik.setFieldValue("area", area, true);
+    setShow(true);
+  };
   return (
     <div>
       <NavBar {...props} />
+      <Toaster />
       <div className="spacer"></div>
       <div className="border-box">
         <div className="upperForm">
@@ -166,167 +297,265 @@ function Profile(props) {
           <hr style={{ marginTop: "20px" }} />
           {/* Address */}
           <div className="loweBox">
-            <h2>Address</h2>
+            <div className="hor">
+              <h2>Address</h2>
+              {show ? (
+                <IconButton
+                  size="large"
+                  color="inherit"
+                  onClick={() => {
+                    setShow(!show);
+                    formik.resetForm();
+                  }}
+                >
+                  <RemoveIcon />
+                </IconButton>
+              ) : (
+                <IconButton
+                  size="large"
+                  color="inherit"
+                  onClick={() => {
+                    if (value) {
+                      if (value.Addresses.length > 4) {
+                        toast.success("Only 5 Addresses can be saved.");
+                        setShow(false);
+                      } else {
+                        setShow(!show);
+                      }
+                    }
+                    formik.resetForm();
+                  }}
+                >
+                  <AddIcon />
+                </IconButton>
+              )}
+            </div>
+            <div className="address hor" style={{ flexWrap: "wrap" }}>
+              {value &&
+                value.Addresses.map(
+                  ({
+                    id,
+                    fullName,
+                    houseno,
+                    landmark,
+                    mobileNumber,
+                    pincode,
+                    state,
+                    townCity,
+                    updatedAt,
+                    area,
+                  }) => (
+                    <div key={id} className="addressCard">
+                      <div className="partA">
+                        <div className="nameDiv hor">
+                          <div className="fullName">{fullName}</div>
+                          <EditIcon
+                            className="pointer"
+                            onClick={() =>
+                              handleEdit({
+                                id,
+                                fullName,
+                                houseno,
+                                landmark,
+                                mobileNumber,
+                                pincode,
+                                state,
+                                townCity,
+                                updatedAt,
+                                area,
+                              })
+                            }
+                          />
+                          <DeleteIcon
+                            className="pointer"
+                            onClick={() => handleDelete(id)}
+                          />
+                        </div>
+                        <div className="mobile">{mobileNumber}</div>
+                        <div className="addressLine1">
+                          {houseno}, {area}, {landmark}, {townCity}
+                        </div>
+                        <div className="addressline2">
+                          {state}-{pincode}
+                        </div>
+                      </div>
+                      <div className="partB">
+                        <div className="lastUpdated">
+                          Lastupdated on -{" "}
+                          {new Date(updatedAt).toLocaleString()}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                )}
+            </div>
+
             <div className="lowerBox-address">
-              <form onSubmit={formik.handleSubmit}>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <TextField
-                      id="outlined-basic"
-                      label="Full Name"
-                      name="fullName"
-                      variant="outlined"
-                      fullWidth={true}
-                      value={formik.values.fullName}
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.fullName &&
-                        Boolean(formik.errors.fullName)
-                      }
-                      helperText={
-                        formik.touched.fullName && formik.errors.fullName
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <TextField
-                      id="outlined-basic"
-                      label="Mobile No."
-                      name="mobileNumber"
-                      variant="outlined"
-                      fullWidth={true}
-                      value={formik.values.mobileNumber}
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.mobileNumber &&
-                        Boolean(formik.errors.mobileNumber)
-                      }
-                      helperText={
-                        formik.touched.mobileNumber &&
-                        formik.errors.mobileNumber
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <TextField
-                      id="outlined-basic"
-                      name="houseno"
-                      label="House No."
-                      variant="outlined"
-                      fullWidth={true}
-                      value={formik.values.houseno}
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.houseno && Boolean(formik.errors.houseno)
-                      }
-                      helperText={
-                        formik.touched.houseno && formik.errors.houseno
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <TextField
-                      id="outlined-basic"
-                      name="area"
-                      label="Area/Street"
-                      variant="outlined"
-                      fullWidth={true}
-                      value={formik.values.area}
-                      onChange={formik.handleChange}
-                      error={formik.touched.area && Boolean(formik.errors.area)}
-                      helperText={formik.touched.area && formik.errors.area}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <TextField
-                      id="outlined-basic"
-                      name="townCity"
-                      label="Town/City/Village"
-                      variant="outlined"
-                      fullWidth={true}
-                      value={formik.values.townCity}
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.townCity &&
-                        Boolean(formik.errors.townCity)
-                      }
-                      helperText={
-                        formik.touched.townCity && formik.errors.townCity
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <TextField
-                      id="outlined-basic"
-                      name="landmark"
-                      label="Landmark"
-                      variant="outlined"
-                      fullWidth={true}
-                      value={formik.values.landmark}
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.landmark &&
-                        Boolean(formik.errors.landmark)
-                      }
-                      helperText={
-                        formik.touched.landmark && formik.errors.landmark
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">
-                        State
-                      </InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        name="state"
-                        value={formik.values.state}
+              {show && (
+                <form onSubmit={formik.handleSubmit}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6} md={4}>
+                      <TextField
+                        id="outlined-basic"
+                        label="Full Name"
+                        name="fullName"
+                        variant="outlined"
+                        fullWidth={true}
+                        value={formik.values.fullName}
                         onChange={formik.handleChange}
                         error={
-                          formik.touched.state && Boolean(formik.errors.state)
+                          formik.touched.fullName &&
+                          Boolean(formik.errors.fullName)
                         }
+                        helperText={
+                          formik.touched.fullName && formik.errors.fullName
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4}>
+                      <TextField
+                        id="outlined-basic"
+                        label="Mobile No."
+                        name="mobileNumber"
+                        variant="outlined"
+                        fullWidth={true}
+                        value={formik.values.mobileNumber}
+                        onChange={formik.handleChange}
+                        error={
+                          formik.touched.mobileNumber &&
+                          Boolean(formik.errors.mobileNumber)
+                        }
+                        helperText={
+                          formik.touched.mobileNumber &&
+                          formik.errors.mobileNumber
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4}>
+                      <TextField
+                        id="outlined-basic"
+                        name="houseno"
+                        label="House No."
+                        variant="outlined"
+                        fullWidth={true}
+                        value={formik.values.houseno}
+                        onChange={formik.handleChange}
+                        error={
+                          formik.touched.houseno &&
+                          Boolean(formik.errors.houseno)
+                        }
+                        helperText={
+                          formik.touched.houseno && formik.errors.houseno
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4}>
+                      <TextField
+                        id="outlined-basic"
+                        name="area"
+                        label="Area/Street"
+                        variant="outlined"
+                        fullWidth={true}
+                        value={formik.values.area}
+                        onChange={formik.handleChange}
+                        error={
+                          formik.touched.area && Boolean(formik.errors.area)
+                        }
+                        helperText={formik.touched.area && formik.errors.area}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4}>
+                      <TextField
+                        id="outlined-basic"
+                        name="townCity"
+                        label="Town/City/Village"
+                        variant="outlined"
+                        fullWidth={true}
+                        value={formik.values.townCity}
+                        onChange={formik.handleChange}
+                        error={
+                          formik.touched.townCity &&
+                          Boolean(formik.errors.townCity)
+                        }
+                        helperText={
+                          formik.touched.townCity && formik.errors.townCity
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4}>
+                      <TextField
+                        id="outlined-basic"
+                        name="landmark"
+                        label="Landmark"
+                        variant="outlined"
+                        fullWidth={true}
+                        value={formik.values.landmark}
+                        onChange={formik.handleChange}
+                        error={
+                          formik.touched.landmark &&
+                          Boolean(formik.errors.landmark)
+                        }
+                        helperText={
+                          formik.touched.landmark && formik.errors.landmark
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4}>
+                      <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-label">
+                          State
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select"
+                          name="state"
+                          value={formik.values.state}
+                          onChange={formik.handleChange}
+                          error={
+                            formik.touched.state && Boolean(formik.errors.state)
+                          }
+                        >
+                          {stateNames.map((value, i) => (
+                            <MenuItem key={i} value={value}>
+                              {value}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4}>
+                      <TextField
+                        id="outlined-basic"
+                        name="pincode"
+                        type="number"
+                        label="Pin Code"
+                        variant="outlined"
+                        fullWidth={true}
+                        inputProps={{ maxLength: 6 }}
+                        value={formik.values.pincode}
+                        onChange={formik.handleChange}
+                        error={
+                          formik.touched.pincode &&
+                          Boolean(formik.errors.pincode)
+                        }
+                        helperText={
+                          formik.touched.pincode && formik.errors.pincode
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4}>
+                      <Button
+                        type="submit"
+                        variant="outlined"
+                        fullWidth={true}
+                        style={{ height: "55px" }}
                       >
-                        {stateNames.map((value, i) => (
-                          <MenuItem key={i} value={value}>
-                            {value}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
+                        Save Details
+                      </Button>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <TextField
-                      id="outlined-basic"
-                      name="pincode"
-                      type="number"
-                      label="Pin Code"
-                      variant="outlined"
-                      fullWidth={true}
-                      inputProps={{ maxLength: 6 }}
-                      value={formik.values.pincode}
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.pincode && Boolean(formik.errors.pincode)
-                      }
-                      helperText={
-                        formik.touched.pincode && formik.errors.pincode
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <Button
-                      type="submit"
-                      variant="outlined"
-                      fullWidth={true}
-                      style={{ height: "55px" }}
-                    >
-                      Save Details
-                    </Button>
-                  </Grid>
-                </Grid>
-              </form>
+                </form>
+              )}
             </div>
           </div>
         </div>
