@@ -87,6 +87,10 @@ export default function PrimarySearchAppBar(props) {
     }, 1000);
   };
 
+  const redirectToHome = () => {
+    props.history.push("/");
+  };
+
   const redirectToLogin = () => {
     props.history.push("/login");
   };
@@ -204,10 +208,12 @@ export default function PrimarySearchAppBar(props) {
             <MenuIcon />
           </IconButton>
           <Typography
+            className="pointer"
             variant="h6"
             noWrap
             component="div"
             sx={{ display: { xs: "none", sm: "block" } }}
+            onClick={redirectToHome}
           >
             MUI
           </Typography>

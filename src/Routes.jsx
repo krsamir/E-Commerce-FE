@@ -9,6 +9,7 @@ const Profile = lazy(() => import("./Components/Profile/Profile"));
 const Verification = lazy(() =>
   import("./Components/Login-Register/Verification")
 );
+const AdminLogin = lazy(() => import("./Components/Login-Register/AdminLogin"));
 
 function Routes() {
   return (
@@ -25,6 +26,7 @@ function Routes() {
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
             <Route path="/verify" component={Verification} />
+            <Route path="/admin/login" component={AdminLogin} />
           </Switch>
         </Suspense>
       </Router>
