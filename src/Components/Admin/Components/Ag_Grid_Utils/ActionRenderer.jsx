@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Dialog from "@mui/material/Dialog";
@@ -12,9 +12,11 @@ import { Button, TextField, Grid } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import "../Style.css";
-// import toast, { Toaster } from "react-hot-toast";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const validationSchema = yup.object({
+  id: yup.number(),
   name: yup.string("Enter Name").required("Name is required"),
   description: yup
     .string("Enter Description")
@@ -24,21 +26,55 @@ const validationSchema = yup.object({
 function ActionRenderer(props) {
   const formik = useFormik({
     initialValues: {
+      id: null,
       name: "",
       description: "",
     },
     validationSchema: validationSchema,
-    onSubmit: (values) => {
-      props.api?.applyTransaction({ add: [values] });
-      formik.resetForm();
-      console.log(values);
-      handleClose();
+    onSubmit: async (values) => {
+      await axios
+        .put("/product/category", values)
+        .then((res) => {
+          if (res.data.status === 0) {
+            toast.error(res.data.message, {
+              duration: 6000,
+              style: {
+                borderRadius: "10px",
+                background: "#333",
+                color: "#fff",
+              },
+            });
+          }
+          if (res.data.status === 1) {
+            toast.success(res.data.message, {
+              duration: 6000,
+              style: {
+                borderRadius: "10px",
+              },
+            });
+            props?.api?.applyTransaction({ update: [values] });
+            formik.resetForm();
+            handleClose();
+          }
+        })
+        .catch((e) => {
+          toast.error("Issues while editing category.", {
+            duration: 6000,
+            style: {
+              borderRadius: "10px",
+              background: "#333",
+              color: "#fff",
+            },
+          });
+          console.log(e);
+        });
     },
   });
-  const [open, setOpen] = React.useState(false);
-  const [openDelete, setOpenDelete] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const [deleteId, setDeleteId] = useState(null);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -48,27 +84,79 @@ function ActionRenderer(props) {
     setOpen(false);
   };
 
-  const handleClickOpenDelete = () => {
+  const handleClickOpenDelete = (data) => {
     setOpenDelete(true);
+    setDeleteId(data);
   };
 
   const handleCloseDelete = () => {
     setOpenDelete(false);
   };
-  const handleDelete = () => {
-    setOpenDelete(false);
+  const handleDelete = async () => {
+    if (deleteId) {
+      await axios
+        .delete("/product/category", {
+          data: {
+            id: deleteId,
+          },
+        })
+        .then((res) => {
+          if (res.data.status === 0) {
+            toast.error(res.data.message, {
+              duration: 6000,
+              style: {
+                borderRadius: "10px",
+                background: "#333",
+                color: "#fff",
+              },
+            });
+          }
+          if (res.data.status === 1) {
+            toast.success(res.data.message, {
+              duration: 6000,
+              style: {
+                borderRadius: "10px",
+              },
+            });
+            props?.api.applyTransaction({ remove: [{ id: deleteId }] });
+            handleCloseDelete();
+            setDeleteId(null);
+          }
+        })
+        .catch((e) => {
+          toast.error("Issues while deleting category.", {
+            duration: 6000,
+            style: {
+              borderRadius: "10px",
+              background: "#333",
+              color: "#fff",
+            },
+          });
+          console.log(e);
+        });
+    } else {
+      toast.error("Issues while deleting category.", {
+        duration: 6000,
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
+    }
   };
 
-  const handleEdit = () => {
+  const handleEdit = (data) => {
     handleClickOpen();
+    formik.setFieldValue("id", props.data.id);
     formik.setFieldValue("name", props.data.name);
     formik.setFieldValue("description", props.data.description);
   };
   return (
     <div>
       <div className="icon hor pointer">
-        <EditIcon onClick={() => handleEdit()} />
-        <DeleteIcon onClick={() => handleClickOpenDelete()} />
+        <EditIcon onClick={() => handleEdit(props.data)} />
+        <DeleteIcon onClick={() => handleClickOpenDelete(props.data.id)} />
         {/* Edit Dialog */}
         <Dialog
           fullScreen={fullScreen}
