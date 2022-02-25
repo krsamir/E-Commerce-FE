@@ -11,6 +11,8 @@
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
+    "ag-grid-community": "^27.0.1",
+    "ag-grid-react": "^27.0.1",
     "axios": "^0.25.0",
     "formik": "^2.2.9",
     "react": "^17.0.2",

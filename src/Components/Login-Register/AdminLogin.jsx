@@ -69,7 +69,7 @@ export default function SignIn(props) {
           window.localStorage.setItem("rid", rid);
           setTimeout(() => {
             if (rid === AppConstant.ROLE.ADMIN) {
-              props.history.push("/admin/admin");
+              props.history.push("/admin/home");
             } else if (rid === AppConstant.ROLE.SHIPMENT) {
               props.history.push("/admin/shipment");
             }
