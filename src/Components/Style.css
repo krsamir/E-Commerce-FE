@@ -30,3 +30,37 @@
 .fullName {
   flex: 1;
 }
+
+.productCard {
+  margin: 15px;
+  box-shadow: 0px 0px 5px #000;
+  border-radius: 15px;
+  height: 380px;
+}
+
+.lowerCard {
+  /* background-color: aquamarine; */
+  padding: 0px 20px 20px 20px;
+  line-height: 1.5em;
+  margin-top: 10px;
+}
+
+.cardImage {
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  height: 300px;
+  width: 100%;
+}
+
+.productCard:hover {
+  box-shadow: 0px 0px 15px #000;
+}
+
+.lowerCard_left {
+  flex: 1;
+}
+
+.name {
+  font-weight: 600;
+  font-size: 16px;
+}
