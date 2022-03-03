@@ -15,8 +15,8 @@ export default function useProductScroll(pageNumber) {
       // cancelToken: new axios.CancelToken((c) => (cancel = c)), //canceling apis
     })
       .then((res) => {
-        setData((prevData) => [...prevData, ...res.data.data.rows]);
-        setHasMore(res.data.data.rows.length > 0); //edit according to need.
+        setData((prevData) => [...prevData, ...res.data.data]);
+        setHasMore(res.data.data.length > 0); //edit according to need.
         setError(false);
         setLoading(false);
       })
