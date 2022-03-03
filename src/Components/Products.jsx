@@ -1,10 +1,7 @@
 import React, { useState, useRef, useCallback } from "react";
 import useProductScroll from "./useProductScroll";
 import { Grid } from "@mui/material";
-import noimage from "../Images/image.jpg";
 import ProductCard from "./ProductCard";
-// import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import "./Style.css";
 function Products(props) {
   const [pageNumber, setPageNumber] = useState(1);

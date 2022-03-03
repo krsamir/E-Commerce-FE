@@ -7,7 +7,6 @@ import toast, { Toaster } from "react-hot-toast";
 export default function ProductCard(props) {
   const {
     data: {
-      id,
       name,
       //   description,
       //   color,
@@ -17,11 +16,12 @@ export default function ProductCard(props) {
       //   totalstocks,
       //   Categories,
       //   Images,
+      productCode,
     },
   } = props;
-  const redirectToProductPage = (id) => {
-    console.log(id);
-    props.history.push(`/product/${id}`);
+  const redirectToProductPage = (productCode) => {
+    console.log(productCode);
+    props.history.push(`/product/${productCode}`);
   };
   return (
     <div>
@@ -32,13 +32,13 @@ export default function ProductCard(props) {
           alt={name}
           loading="lazy"
           className="cardImage pointer"
-          onClick={() => redirectToProductPage(id)}
+          onClick={() => redirectToProductPage(productCode)}
         />
         <div className="lowerCard hor">
           <div className="lowerCard_left">
             <div
               className="name pointer"
-              onClick={() => redirectToProductPage(id)}
+              onClick={() => redirectToProductPage(productCode)}
             >
               {name}
             </div>
