@@ -39,6 +39,7 @@ function Category(props) {
         console.log(e);
         props.errorToast("Issues while Fetching category.");
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const theme = useTheme();

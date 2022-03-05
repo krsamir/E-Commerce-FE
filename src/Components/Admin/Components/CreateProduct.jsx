@@ -1,10 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { Button, TextField, Grid } from "@mui/material";
 import { successToast, errorToast } from "../../../Redux/Actions/ToastActions";
 import { connect } from "react-redux";
 import { Toaster } from "react-hot-toast";
+import axios from "axios";
+import Select from "react-select";
+import "./Style.css";
+
 const validationSchema = yup.object({
   name: yup.string("Enter Name").required("Name is required"),
   description: yup.string("Enter Description"),
@@ -19,18 +23,79 @@ const validationSchema = yup.object({
   isActive: yup.number("Mention Active State"),
   color: yup.string("Enter Color"),
   itemsold: yup.number("Enter Item Sold in (numbers)"),
-  Categories: yup.string("Enter Categories"),
   material: yup.string("Enter Material"),
   productCode: yup.string(),
   id: yup.number(),
 });
 
 function CreateProduct(props) {
+  const [categories, setCategories] = useState({
+    productId: null,
+    category: [],
+  });
+  const [categoriesMaster, setCategoriesMaster] = useState([]);
+  useEffect(() => {
+    axios
+      .get("/product/category")
+      .then((res) => {
+        setCategoriesMaster(
+          res.data.data.map(({ id, name }) => ({
+            value: name,
+            label: name,
+            id,
+          }))
+        );
+        if (res.data.status === 0) {
+          props.errorToast(res.data.message);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        props.errorToast("Issues while Fetching category.");
+      });
+  }, []);
+
   useEffect(() => {
     if (props.location.state) {
-      console.log(props.location.state);
+      const {
+        Categories,
+        // Images,
+        actualprice,
+        color,
+        description,
+        id,
+        isActive,
+        itemsold,
+        keepinstocktill,
+        material,
+        name,
+        offerprice,
+        productCode,
+        totalstocks,
+      } = props.location.state;
+      formik.setFieldValue("name", name);
+      formik.setFieldValue("actualprice", actualprice);
+      formik.setFieldValue("color", color);
+      formik.setFieldValue("description", description);
+      formik.setFieldValue("id", id);
+      formik.setFieldValue("isActive", isActive);
+      formik.setFieldValue("itemsold", itemsold);
+      formik.setFieldValue("keepinstocktill", keepinstocktill);
+      formik.setFieldValue("material", material);
+      formik.setFieldValue("offerprice", offerprice);
+      formik.setFieldValue("productCode", productCode);
+      formik.setFieldValue("totalstocks", totalstocks);
+      formik.setFieldValue("name", name);
+      setCategories({
+        productId: id,
+        category: Categories.map(({ id, name }) => ({
+          value: name,
+          label: name,
+          id,
+        })),
+      });
     }
-  }, [props]);
+  }, []);
 
   const formik = useFormik({
     initialValues: {
@@ -40,7 +105,6 @@ function CreateProduct(props) {
       actualprice: "",
       isActive: "",
       keepinstocktill: "",
-      Categories: "",
       material: "",
       color: "",
       description: "",
@@ -51,6 +115,7 @@ function CreateProduct(props) {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       console.log(values);
+      console.log(categories);
       props.successToast("Testing toast");
       //   await axios
       //     .post("/product/category", values)
@@ -91,9 +156,15 @@ function CreateProduct(props) {
     },
   });
 
+  const handleCategoriesChange = (e) => {
+    console.log(e);
+    setCategories({ ...categories, category: e });
+  };
+
   return (
     <div>
       <Toaster />
+      <h3>Create/ Update Products</h3>
       <form onSubmit={formik.handleSubmit}>
         <div style={{ marginTop: "20px" }}>
           <Grid container spacing={2}>
@@ -187,23 +258,6 @@ function CreateProduct(props) {
               <TextField
                 fullWidth
                 variant="outlined"
-                id="Categories"
-                name="Categories"
-                label="Categories"
-                value={formik.values.Categories}
-                onChange={formik.handleChange}
-                error={
-                  formik.touched.Categories && Boolean(formik.errors.Categories)
-                }
-                helperText={
-                  formik.touched.Categories && formik.errors.Categories
-                }
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <TextField
-                fullWidth
-                variant="outlined"
                 id="material"
                 name="material"
                 label="Material"
@@ -276,7 +330,7 @@ function CreateProduct(props) {
                 helperText={formik.touched.isActive && formik.errors.isActive}
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
+            <Grid item xs={12} sm={12} md={12} lg={12}>
               <TextField
                 fullWidth
                 variant="outlined"
@@ -305,7 +359,17 @@ function CreateProduct(props) {
             justifyContent: "flex-end",
           }}
         >
-          <Button variant="contained">Cancel</Button>
+          <Button
+            variant="contained"
+            onClick={() =>
+              props.history.push({
+                pathname: "/admin/home/products",
+                state: "",
+              })
+            }
+          >
+            Cancel
+          </Button>
           <Button
             variant="contained"
             type="submit"
@@ -315,6 +379,27 @@ function CreateProduct(props) {
           </Button>
         </div>
       </form>
+      <div className="image_categories">
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={(e) => console.log(e.target.files)}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Select
+              options={categoriesMaster}
+              value={categories.category}
+              isMulti={true}
+              isSearchable={true}
+              onChange={handleCategoriesChange}
+            />
+          </Grid>
+        </Grid>
+      </div>
     </div>
   );
 }

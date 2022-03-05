@@ -26,7 +26,6 @@ function Products(props) {
         props.errorToast("Issues while Fetching Product.");
         console.log(e);
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const theme = useTheme();
