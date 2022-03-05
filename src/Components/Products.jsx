@@ -3,6 +3,7 @@ import useProductScroll from "./useProductScroll";
 import { Grid } from "@mui/material";
 import ProductCard from "./ProductCard";
 import "./Style.css";
+import { Toaster } from "react-hot-toast";
 function Products(props) {
   const [pageNumber, setPageNumber] = useState(1);
   const { loading, data, error, hasMore } = useProductScroll(pageNumber);
@@ -24,6 +25,7 @@ function Products(props) {
 
   return (
     <div style={{ margin: "40px 20px 10px 20px" }}>
+      <Toaster />
       <Grid container spacing={2}>
         {data.map((value, index) => {
           if (data.length === index + 1) {
