@@ -12,7 +12,9 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import ForgotPassword from "./ForgotPassword";
 import axios from "axios";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
+import { successToast, errorToast } from "../../Redux/Actions/ToastActions";
+import { connect } from "react-redux";
 
 function Copyright(props) {
   return (
@@ -33,8 +35,7 @@ function Copyright(props) {
 }
 
 const theme = createTheme();
-
-export default function SignInSide(props) {
+function SignInSide(props) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -47,22 +48,10 @@ export default function SignInSide(props) {
       .post("/auth/login", value)
       .then((res) => {
         if (res.data.status === 0) {
-          toast.error(res.data.message, {
-            duration: 6000,
-            style: {
-              borderRadius: "10px",
-              background: "#333",
-              color: "#fff",
-            },
-          });
+          props.errorToast(res.data.message);
         }
         if (res.data.status === 1) {
-          toast.success(res.data.message, {
-            duration: 6000,
-            style: {
-              borderRadius: "10px",
-            },
-          });
+          props.successToast(res.data.message);
           const token = res.data.token;
           const rid = res.data.rid;
           window.localStorage.setItem("sid", token);
@@ -74,7 +63,7 @@ export default function SignInSide(props) {
       })
       .catch((e) => {
         console.log(e);
-        toast.error("Some issue while logging you in!!");
+        props.errorToast("Some issue while logging you in!!");
       });
   };
 
@@ -173,3 +162,5 @@ export default function SignInSide(props) {
     </ThemeProvider>
   );
 }
+
+export default connect(null, { successToast, errorToast })(SignInSide);

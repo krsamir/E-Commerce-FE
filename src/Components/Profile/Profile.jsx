@@ -19,8 +19,9 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import RemoveIcon from "@mui/icons-material/Remove";
-import toast, { Toaster } from "react-hot-toast";
-
+import { Toaster } from "react-hot-toast";
+import { successToast, errorToast } from "../../Redux/Actions/ToastActions";
+import { connect } from "react-redux";
 const validationSchema = yup.object({
   fullName: yup.string().required("Name is mandatory field."),
   mobileNumber: yup
@@ -54,31 +55,16 @@ function Profile(props) {
           if (res.data.status === 1) {
             setValue(res.data.data);
           } else {
-            toast.error("Caught into some issue while fetching profile.", {
-              duration: 6000,
-              position: "top-center",
-              style: {
-                borderRadius: "10px",
-                background: "#333",
-                color: "#fff",
-              },
-            });
+            props.errorToast("Caught into some issue while fetching profile.");
           }
         })
         .catch((e) => {
-          toast.error("Caught into some issue while fetching profile.", {
-            duration: 6000,
-            position: "top-center",
-            style: {
-              borderRadius: "10px",
-              background: "#333",
-              color: "#fff",
-            },
-          });
+          props.errorToast("Caught into some issue while fetching profile.");
           console.log(e);
         });
     };
     getProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const formik = useFormik({
@@ -106,14 +92,14 @@ function Profile(props) {
   const createAddress = async (values) => {
     if (value) {
       if (value.Addresses.length > 4) {
-        toast.success("Only 5 Addresses can be saved.");
+        props.successToast("Only 5 Addresses can be saved.");
       } else {
         delete values.id;
         await axios
           .post("/user/address", values)
           .then((res) => {
             if (res.data.status === 1) {
-              toast.success(res.data.message, { duration: 6000 });
+              props.successToast(res.data.message);
               const data = value;
               setValue({
                 ...data,
@@ -122,27 +108,11 @@ function Profile(props) {
               formik.resetForm();
               setShow(false);
             } else {
-              toast.error(res.data.message, {
-                duration: 6000,
-                position: "top-center",
-                style: {
-                  borderRadius: "10px",
-                  background: "#333",
-                  color: "#fff",
-                },
-              });
+              props.errorToast(res.data.message);
             }
           })
           .catch((e) => {
-            toast.error("Caught into some issue while adding address.", {
-              duration: 6000,
-              position: "top-center",
-              style: {
-                borderRadius: "10px",
-                background: "#333",
-                color: "#fff",
-              },
-            });
+            props.errorToast("Caught into some issue while adding address.");
           });
       }
     }
@@ -152,7 +122,7 @@ function Profile(props) {
       .put("/user/address", values)
       .then((res) => {
         if (res.data.status === 1) {
-          toast.success(res.data.message, { duration: 6000 });
+          props.successToast(res.data.message);
           setShow(false);
           formik.resetForm();
           const data = value;
@@ -161,28 +131,12 @@ function Profile(props) {
           data.Addresses.splice(indexedElement, 1, values);
           setValue({ ...data, Addresses: data.Addresses });
         } else {
-          toast.error("Caught into some issue while deleting address.", {
-            duration: 6000,
-            position: "top-center",
-            style: {
-              borderRadius: "10px",
-              background: "#333",
-              color: "#fff",
-            },
-          });
+          props.errorToast("Caught into some issue while deleting address.");
         }
       })
       .catch((e) => {
         console.log(e);
-        toast.error("Caught into some issue while deleting address.", {
-          duration: 6000,
-          position: "top-center",
-          style: {
-            borderRadius: "10px",
-            background: "#333",
-            color: "#fff",
-          },
-        });
+        props.errorToast("Caught into some issue while deleting address.");
       });
   };
   const [show, setShow] = useState(false);
@@ -196,32 +150,16 @@ function Profile(props) {
           const indexedElement = idArray.indexOf(id);
           data.Addresses.splice(indexedElement, 1);
           setValue({ ...data, Addresses: data.Addresses });
-          toast.success(res.data.message, { duration: 6000 });
+          props.successToast(res.data.message);
           setShow(false);
           formik.resetForm();
         } else {
-          toast.error("Caught into some issue while deleting address.", {
-            duration: 6000,
-            position: "top-center",
-            style: {
-              borderRadius: "10px",
-              background: "#333",
-              color: "#fff",
-            },
-          });
+          props.errorToast("Caught into some issue while deleting address.");
         }
       })
       .catch((e) => {
         console.log(e);
-        toast.error("Caught into some issue while deleting address.", {
-          duration: 6000,
-          position: "top-center",
-          style: {
-            borderRadius: "10px",
-            background: "#333",
-            color: "#fff",
-          },
-        });
+        props.errorToast("Caught into some issue while deleting address.");
       });
   };
   const handleEdit = ({
@@ -317,7 +255,7 @@ function Profile(props) {
                   onClick={() => {
                     if (value) {
                       if (value.Addresses.length > 4) {
-                        toast.success("Only 5 Addresses can be saved.");
+                        props.successToast("Only 5 Addresses can be saved.");
                         setShow(false);
                       } else {
                         setShow(!show);
@@ -568,4 +506,4 @@ function Profile(props) {
   );
 }
 
-export default Profile;
+export default connect(null, { successToast, errorToast })(Profile);

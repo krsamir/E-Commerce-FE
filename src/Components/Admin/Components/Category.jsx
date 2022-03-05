@@ -14,7 +14,9 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import axios from "axios";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
+import { successToast, errorToast } from "../../../Redux/Actions/ToastActions";
+import { connect } from "react-redux";
 const validationSchema = yup.object({
   name: yup.string("Enter Name").required("Name is required"),
   description: yup
@@ -22,7 +24,7 @@ const validationSchema = yup.object({
     .max(254, "Cannot exceed more than 254 characters."),
 });
 
-function Category() {
+function Category(props) {
   const [rowData, setrowData] = useState(undefined);
   useEffect(() => {
     axios
@@ -30,26 +32,12 @@ function Category() {
       .then((res) => {
         setrowData(res.data.data);
         if (res.data.status === 0) {
-          toast.error(res.data.message, {
-            duration: 6000,
-            style: {
-              borderRadius: "10px",
-              background: "#333",
-              color: "#fff",
-            },
-          });
+          props.errorToast(res.data.message);
         }
       })
       .catch((e) => {
         console.log(e);
-        toast.error("Issues while Fetching category.", {
-          duration: 6000,
-          style: {
-            borderRadius: "10px",
-            background: "#333",
-            color: "#fff",
-          },
-        });
+        props.errorToast("Issues while Fetching category.");
       });
   }, []);
 
@@ -85,36 +73,17 @@ function Category() {
         .post("/product/category", values)
         .then((res) => {
           if (res.data.status === 0) {
-            toast.error(res.data.message, {
-              duration: 6000,
-              style: {
-                borderRadius: "10px",
-                background: "#333",
-                color: "#fff",
-              },
-            });
+            props.errorToast(res.data.message);
           }
           if (res.data.status === 1) {
-            toast.success(res.data.message, {
-              duration: 6000,
-              style: {
-                borderRadius: "10px",
-              },
-            });
+            props.successToast(res.data.message);
             gridApi?.applyTransaction({ add: [res.data.data] });
             formik.resetForm();
             handleClose();
           }
         })
         .catch((e) => {
-          toast.error("Issues while Creating category.", {
-            duration: 6000,
-            style: {
-              borderRadius: "10px",
-              background: "#333",
-              color: "#fff",
-            },
-          });
+          props.errorToast("Issues while Creating category.");
           console.log(e);
         });
     },
@@ -248,4 +217,7 @@ function Category() {
   );
 }
 
-export default Category;
+export default connect(null, {
+  successToast,
+  errorToast,
+})(Category);

@@ -3,8 +3,10 @@ import "./Style.css";
 import noimage from "../Images/image.jpg";
 // import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
-import toast, { Toaster } from "react-hot-toast";
-export default function ProductCard(props) {
+import { Toaster } from "react-hot-toast";
+import { successToast, errorToast } from "../Redux/Actions/ToastActions";
+import { connect } from "react-redux";
+function ProductCard(props) {
   const {
     data: {
       name,
@@ -54,9 +56,7 @@ export default function ProductCard(props) {
             <AddShoppingCartIcon
               className="pointer"
               onClick={() =>
-                toast.success("Product added to cart Successfully!!", {
-                  duration: 6000,
-                })
+                props.successToast("Product added to cart Successfully!!")
               }
             />
           </div>
@@ -65,3 +65,8 @@ export default function ProductCard(props) {
     </div>
   );
 }
+
+export default connect(null, {
+  successToast,
+  errorToast,
+})(ProductCard);

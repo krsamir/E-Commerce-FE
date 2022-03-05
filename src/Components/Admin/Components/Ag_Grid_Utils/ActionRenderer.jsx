@@ -13,8 +13,11 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import "../Style.css";
 import axios from "axios";
-import toast from "react-hot-toast";
-
+import {
+  successToast,
+  errorToast,
+} from "../../../../Redux/Actions/ToastActions";
+import { connect } from "react-redux";
 const validationSchema = yup.object({
   id: yup.number(),
   name: yup.string("Enter Name").required("Name is required"),
@@ -36,36 +39,17 @@ function ActionRenderer(props) {
         .put("/product/category", values)
         .then((res) => {
           if (res.data.status === 0) {
-            toast.error(res.data.message, {
-              duration: 6000,
-              style: {
-                borderRadius: "10px",
-                background: "#333",
-                color: "#fff",
-              },
-            });
+            props.errorToast(res.data.message);
           }
           if (res.data.status === 1) {
-            toast.success(res.data.message, {
-              duration: 6000,
-              style: {
-                borderRadius: "10px",
-              },
-            });
+            props.successToast(res.data.message);
             props?.api?.applyTransaction({ update: [values] });
             formik.resetForm();
             handleClose();
           }
         })
         .catch((e) => {
-          toast.error("Issues while editing category.", {
-            duration: 6000,
-            style: {
-              borderRadius: "10px",
-              background: "#333",
-              color: "#fff",
-            },
-          });
+          props.errorToast("Issues while editing category.");
           console.log(e);
         });
     },
@@ -102,47 +86,21 @@ function ActionRenderer(props) {
         })
         .then((res) => {
           if (res.data.status === 0) {
-            toast.error(res.data.message, {
-              duration: 6000,
-              style: {
-                borderRadius: "10px",
-                background: "#333",
-                color: "#fff",
-              },
-            });
+            props.errorToast(res.data.message);
           }
           if (res.data.status === 1) {
-            toast.success(res.data.message, {
-              duration: 6000,
-              style: {
-                borderRadius: "10px",
-              },
-            });
+            props.successToast(res.data.message);
             props?.api.applyTransaction({ remove: [{ id: deleteId }] });
             handleCloseDelete();
             setDeleteId(null);
           }
         })
         .catch((e) => {
-          toast.error("Issues while deleting category.", {
-            duration: 6000,
-            style: {
-              borderRadius: "10px",
-              background: "#333",
-              color: "#fff",
-            },
-          });
+          props.errorToast("Issues while deleting category.");
           console.log(e);
         });
     } else {
-      toast.error("Issues while deleting category.", {
-        duration: 6000,
-        style: {
-          borderRadius: "10px",
-          background: "#333",
-          color: "#fff",
-        },
-      });
+      props.errorToast("Issues while deleting category.");
     }
   };
 
@@ -239,4 +197,4 @@ function ActionRenderer(props) {
   );
 }
 
-export default ActionRenderer;
+export default connect(null, { successToast, errorToast })(ActionRenderer);

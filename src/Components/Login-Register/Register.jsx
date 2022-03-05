@@ -3,7 +3,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import { useFormik } from "formik";
+import { connect, useFormik } from "formik";
 import * as yup from "yup";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
@@ -14,6 +14,7 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
+import { successToast, errorToast } from "../../Redux/Actions/ToastActions";
 
 const validationSchema = yup.object({
   name: yup.string().required("Name is mandatory field."),
@@ -55,7 +56,7 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function SignUp(props) {
+function SignUp(props) {
   const [isDisabled, setDisabledState] = useState(false);
   const [email, setEmail] = useState("");
   const formik = useFormik({
@@ -74,7 +75,7 @@ export default function SignUp(props) {
         .post("/auth/register", values)
         .then((response) => {
           if (response.data.status === 1) {
-            toast.success(response.data.message, { duration: 6000 });
+            props.successToast(response.data.message);
             formik.resetForm();
             setDisabledState(true);
           }
@@ -100,15 +101,7 @@ export default function SignUp(props) {
               }
             );
           } else {
-            toast.error(e.response.data.message, {
-              duration: 6000,
-              position: "top-center",
-              style: {
-                borderRadius: "10px",
-                background: "#333",
-                color: "#fff",
-              },
-            });
+            props.errorToast(e.response.data.message);
           }
         });
     },
@@ -131,10 +124,10 @@ export default function SignUp(props) {
             if (res.data.status === 0) {
               setOtpError(res.data.message);
               setOtp("");
-              toast.error(res.data.message, { duration: 3000 });
+              props.errorToast(res.data.message3000);
             }
             if (res.data.status === 1) {
-              toast.success("Token Verification Successfull.");
+              props.successToast("Token Verification Successfull.");
               window.localStorage.setItem("sid", res.data.token);
               window.localStorage.setItem("rid", res.data.rid);
               setTimeout(() => {
@@ -145,9 +138,9 @@ export default function SignUp(props) {
           .catch((e) => {
             console.log(e);
             if (e.response.status === 429) {
-              toast.error(e.response.data, { duration: 6000 });
+              props.errorToast(e.response.data, { duration: 6000 });
             } else {
-              toast.error("Some issue while OTP Verification!!");
+              props.errorToast("Some issue while OTP Verification!!");
             }
           });
       }, 200);
@@ -314,3 +307,5 @@ export default function SignUp(props) {
     </ThemeProvider>
   );
 }
+
+export default connect(null, { successToast, errorToast })(SignUp);

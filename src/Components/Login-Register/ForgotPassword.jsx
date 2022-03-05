@@ -7,9 +7,10 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import axios from "axios";
-import toast, { Toaster } from "react-hot-toast";
-
-export default function ForgotPassword(props) {
+import { Toaster } from "react-hot-toast";
+import { successToast, errorToast } from "../../Redux/Actions/ToastActions";
+import { connect } from "react-redux";
+function ForgotPassword(props) {
   const [open, setOpen] = useState(false);
   const [sentStatus, setSentStatus] = useState(false);
   const [otp, setOtp] = useState("");
@@ -46,31 +47,16 @@ export default function ForgotPassword(props) {
       .then((res) => {
         const data = res.data;
         if (data.status === 0) {
-          toast.error(data.message, {
-            duration: 6000,
-            style: {
-              borderRadius: "10px",
-            },
-          });
+          props.errorToast(data.message);
         }
         if (data.status === 1) {
           setSentStatus(true);
-          toast.success(data.message, {
-            duration: 6000,
-            style: {
-              borderRadius: "10px",
-            },
-          });
+          props.successToast(data.message);
         }
       })
       .catch((e) => {
         console.log(e);
-        toast.error("Some issue while Sending OTP.", {
-          duration: 6000,
-          style: {
-            borderRadius: "10px",
-          },
-        });
+        props.errorToast("Some issue while Sending OTP.");
       });
   };
 
@@ -90,10 +76,10 @@ export default function ForgotPassword(props) {
             if (res.data.status === 0) {
               setOtpError(res.data.message);
               setOtp("");
-              toast.error(res.data.message, { duration: 3000 });
+              props.errorToast(res.data.message);
             }
             if (res.data.status === 1) {
-              toast.success("Token Verification Successfull.");
+              props.successToast("Token Verification Successfull.");
               setOtpStatus(false);
             }
           })
@@ -101,9 +87,9 @@ export default function ForgotPassword(props) {
             setOtpStatus(true);
             console.log(e);
             if (e.response.status === 429) {
-              toast.error(e.response.data, { duration: 6000 });
+              props.errorToast(e.response.data);
             } else {
-              toast.error("Some issue while OTP Verification!!");
+              props.errorToast("Some issue while OTP Verification!!");
             }
           });
       }, 200);
@@ -116,11 +102,11 @@ export default function ForgotPassword(props) {
       .then((response) => {
         const res = response.data;
         if (res.status === 1) {
-          toast.success(res.message);
+          props.successToast(res.message);
           handleClose();
         }
         if (res.status === 0) {
-          toast.error(res.data.message, { duration: 3000 });
+          props.errorToast(res.data.message, 3000);
         }
       })
       .catch((e) => {
@@ -208,3 +194,5 @@ export default function ForgotPassword(props) {
     </div>
   );
 }
+
+export default connect(null, { successToast, errorToast })(ForgotPassword);

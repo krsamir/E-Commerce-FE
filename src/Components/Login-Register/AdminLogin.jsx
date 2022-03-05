@@ -11,9 +11,10 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import { AppConstant } from "../../Authentication/Constants";
-
+import { errorToast, successToast } from "../../Redux/Actions/ToastActions";
+import { connect } from "react-redux";
 function Copyright(props) {
   return (
     <Typography
@@ -34,7 +35,7 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function SignIn(props) {
+function SignIn(props) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -47,22 +48,10 @@ export default function SignIn(props) {
       .post("/auth/admin/login", value)
       .then((res) => {
         if (res.data.status === 0) {
-          toast.error(res.data.message, {
-            duration: 6000,
-            style: {
-              borderRadius: "10px",
-              background: "#333",
-              color: "#fff",
-            },
-          });
+          props.errorToast(res.data.message);
         }
         if (res.data.status === 1) {
-          toast.success(res.data.message, {
-            duration: 6000,
-            style: {
-              borderRadius: "10px",
-            },
-          });
+          props.successToast(res.data.message);
           const token = res.data.token;
           const rid = res.data.rid;
           window.localStorage.setItem("sid", token);
@@ -78,7 +67,7 @@ export default function SignIn(props) {
       })
       .catch((e) => {
         console.log(e);
-        toast.error("Some issue while logging you in!!");
+        props.errorToast("Some issue while logging you in!!");
       });
   };
 
@@ -154,3 +143,5 @@ export default function SignIn(props) {
     </ThemeProvider>
   );
 }
+
+export default connect(null, { successToast, errorToast })(SignIn);

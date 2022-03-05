@@ -4,6 +4,9 @@ import { Switch, useRouteMatch } from "react-router-dom";
 import { AppConstant } from "../../Authentication/Constants";
 const Home = lazy(() => import("./Components/Home"));
 const Category = lazy(() => import("./Components/Category"));
+const Products = lazy(() => import("./Components/Products"));
+const CreateProduct = lazy(() => import("./Components/CreateProduct"));
+
 function Routes() {
   let { path } = useRouteMatch();
   // const {
@@ -22,6 +25,22 @@ function Routes() {
           <ProtectedRoute
             path={`${path}/category`}
             component={Category}
+            hasAuthority={[AppConstant.ROLE.ADMIN]}
+          />
+          <ProtectedRoute
+            path={`${path}/products`}
+            exact
+            component={Products}
+            hasAuthority={[AppConstant.ROLE.ADMIN]}
+          />
+          <ProtectedRoute
+            path={`${path}/products/new`}
+            component={CreateProduct}
+            hasAuthority={[AppConstant.ROLE.ADMIN]}
+          />
+          <ProtectedRoute
+            path={`${path}/products/edit`}
+            component={CreateProduct}
             hasAuthority={[AppConstant.ROLE.ADMIN]}
           />
         </Switch>

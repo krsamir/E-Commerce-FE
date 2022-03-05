@@ -3,7 +3,9 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
+import { successToast, errorToast } from "../../Redux/Actions/ToastActions";
+import { connect } from "react-redux";
 import {
   Avatar,
   Button,
@@ -43,7 +45,7 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function Verification(props) {
+function Verification(props) {
   const [open, setopen] = useState(true);
   const [password, setpassword] = useState("");
   let query = useQuery();
@@ -61,17 +63,18 @@ export default function Verification(props) {
       .then((response) => {
         const res = response.data;
         if (res.status === 1) {
-          toast.success(res.message);
+          props.successToast(res.message);
           setTimeout(() => {
             props.history.push("/login");
           }, 2000);
         }
         if (res.status === 0) {
-          toast.error(res.data.message, { duration: 3000 });
+          props.errorToast(res.data.message, 3000);
         }
       })
       .catch((e) => {
         console.log(e);
+        props.errorToast("Some issue while verification.");
       });
   };
   useEffect(() => {
@@ -85,13 +88,13 @@ export default function Verification(props) {
             .post("/auth/verify", { username, token })
             .then((res) => {
               if (res.data.status === 0) {
-                toast.error(res.data.message, { duration: 3000 });
+                props.errorToast(res.data.message);
                 setTimeout(() => {
                   props.history.push("/login");
                 }, 3000);
               }
               if (res.data.status === 1) {
-                toast.success("Token Verification Successfull.");
+                props.successToast("Token Verification Successfull.");
                 window.localStorage.setItem("sid", res.data.token);
                 window.localStorage.setItem("rid", res.data.rid);
                 setTimeout(() => {
@@ -102,9 +105,9 @@ export default function Verification(props) {
             .catch((e) => {
               console.log(e);
               if (e.response.status === 429) {
-                toast.error(e.response.data, { duration: 6000 });
+                props.errorToast(e.response.data);
               } else {
-                toast.error("Some issue while OTP Verification!!");
+                props.errorToast("Some issue while OTP Verification!!");
               }
               setTimeout(() => {
                 props.history.push("/login");
@@ -117,22 +120,22 @@ export default function Verification(props) {
               .post("/auth/reset/verify", { username, token })
               .then((res) => {
                 if (res.data.status === 0) {
-                  toast.error(res.data.message, { duration: 3000 });
+                  props.errorToast(res.data.message);
                   setTimeout(() => {
                     props.history.push("/login");
                   }, 3000);
                 }
                 if (res.data.status === 1) {
                   setopen(false);
-                  toast.success("Token Verification Successfull.");
+                  props.successToast("Token Verification Successfull.");
                 }
               })
               .catch((e) => {
                 console.log(e);
                 if (e.response.status === 429) {
-                  toast.error(e.response.data, { duration: 6000 });
+                  props.errorToast(e.response.data, { duration: 6000 });
                 } else {
-                  toast.error("Some issue while OTP Verification!!");
+                  props.errorToast("Some issue while OTP Verification!!");
                 }
                 setTimeout(() => {
                   props.history.push("/login");
@@ -142,7 +145,7 @@ export default function Verification(props) {
         }
       }, 200);
     } else {
-      toast.error("Invalid Request.", { duration: 3000 });
+      props.errorToast("Invalid Request.", { duration: 3000 });
       setTimeout(() => {
         props.history.push("/login");
       }, 3000);
@@ -220,3 +223,5 @@ export default function Verification(props) {
     </div>
   );
 }
+
+export default connect(null, { successToast, errorToast })(Verification);

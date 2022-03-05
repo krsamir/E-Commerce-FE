@@ -23,7 +23,7 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { Link } from "react-router-dom";
 import ListItemButton from "@mui/material/ListItemButton";
 import Collapse from "@mui/material/Collapse";
-import StarBorder from "@mui/icons-material/StarBorder";
+import Storage from "@mui/icons-material/Storage";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 const drawerWidth = 240;
@@ -111,6 +111,17 @@ export default function AdminMain(props) {
     window.location.reload();
   };
 
+  const sideBarMenuMasters = [
+    {
+      path: "/admin/home/products",
+      name: "Products",
+    },
+    {
+      path: "/admin/home/category",
+      name: "Category",
+    },
+  ];
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -165,20 +176,22 @@ export default function AdminMain(props) {
             {openMaster1 ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
           <Collapse in={openMaster1} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              <Link
-                to={`/admin/home/category`}
-                className="links"
-                style={{ textDecoration: "none", color: "black" }}
-              >
-                <ListItemButton sx={{ pl: 4 }}>
-                  <ListItemIcon>
-                    <StarBorder />
-                  </ListItemIcon>
-                  <ListItemText primary="Starred" />
-                </ListItemButton>
-              </Link>
-            </List>
+            {sideBarMenuMasters.map(({ name, path }, ind) => (
+              <List component="div" disablePadding key={ind}>
+                <Link
+                  to={path}
+                  className="links"
+                  style={{ textDecoration: "none", color: "black" }}
+                >
+                  <ListItemButton sx={{ pl: 4 }}>
+                    <ListItemIcon>
+                      <Storage />
+                    </ListItemIcon>
+                    <ListItemText primary={name} />
+                  </ListItemButton>
+                </Link>
+              </List>
+            ))}
           </Collapse>
           {/* {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
             <ListItem button key={text}>
