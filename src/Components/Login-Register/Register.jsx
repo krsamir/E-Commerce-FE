@@ -13,7 +13,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { successToast, errorToast } from "../../Redux/Actions/ToastActions";
 
 const validationSchema = yup.object({
@@ -149,7 +149,6 @@ function SignUp(props) {
 
   return (
     <ThemeProvider theme={theme}>
-      <Toaster />
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box

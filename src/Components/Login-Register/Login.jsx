@@ -12,7 +12,6 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import ForgotPassword from "./ForgotPassword";
 import axios from "axios";
-import { Toaster } from "react-hot-toast";
 import { successToast, errorToast } from "../../Redux/Actions/ToastActions";
 import { connect } from "react-redux";
 
@@ -69,7 +68,6 @@ function SignInSide(props) {
 
   return (
     <ThemeProvider theme={theme}>
-      <Toaster />
       <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
         <Grid

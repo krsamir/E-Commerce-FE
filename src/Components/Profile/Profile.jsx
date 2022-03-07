@@ -19,7 +19,6 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { Toaster } from "react-hot-toast";
 import { successToast, errorToast } from "../../Redux/Actions/ToastActions";
 import { connect } from "react-redux";
 const validationSchema = yup.object({
@@ -187,7 +186,6 @@ function Profile(props) {
   return (
     <div>
       <NavBar {...props} />
-      <Toaster />
       <div className="spacer"></div>
       <div className="border-box">
         <div className="upperForm">

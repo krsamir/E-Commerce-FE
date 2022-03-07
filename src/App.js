@@ -3,6 +3,7 @@ import store from "./Redux/Store.js";
 import "./App.css";
 import Routes from "./Routes.jsx";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { Toaster } from "react-hot-toast";
 function App() {
   if (process.env.NODE_ENV === "production") {
     window.console.log = () => {};
@@ -28,6 +29,7 @@ function App() {
       <Provider store={store}>
         <ThemeProvider theme={theme}>
           <Routes />
+          <Toaster />
         </ThemeProvider>
       </Provider>
     </div>

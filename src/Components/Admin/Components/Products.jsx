@@ -8,7 +8,6 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import EditIcon from "@mui/icons-material/Edit";
 import axios from "axios";
-import { Toaster } from "react-hot-toast";
 import { successToast, errorToast } from "../../../Redux/Actions/ToastActions";
 import { connect } from "react-redux";
 function Products(props) {
@@ -121,7 +120,6 @@ function Products(props) {
   const getRowNodeId = (data) => data.id;
   return (
     <div>
-      <Toaster />
       <div className="hor">
         <h2 style={{ marginRight: "20px", flex: "1" }}>Products</h2>
         <div className="hor createCategory">

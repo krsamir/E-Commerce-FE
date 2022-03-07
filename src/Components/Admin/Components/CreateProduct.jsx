@@ -4,7 +4,6 @@ import * as yup from "yup";
 import { Button, TextField, Grid } from "@mui/material";
 import { successToast, errorToast } from "../../../Redux/Actions/ToastActions";
 import { connect } from "react-redux";
-import { Toaster } from "react-hot-toast";
 import axios from "axios";
 import Select from "react-select";
 import "./Style.css";
@@ -163,7 +162,6 @@ function CreateProduct(props) {
 
   return (
     <div>
-      <Toaster />
       <h3>Create/ Update Products</h3>
       <form onSubmit={formik.handleSubmit}>
         <div style={{ marginTop: "20px" }}>

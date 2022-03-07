@@ -3,7 +3,6 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-import { Toaster } from "react-hot-toast";
 import { successToast, errorToast } from "../../Redux/Actions/ToastActions";
 import { connect } from "react-redux";
 import {
@@ -155,7 +154,6 @@ function Verification(props) {
 
   return (
     <div>
-      <Toaster />
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={open}

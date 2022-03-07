@@ -14,7 +14,6 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import axios from "axios";
-import { Toaster } from "react-hot-toast";
 import { successToast, errorToast } from "../../../Redux/Actions/ToastActions";
 import { connect } from "react-redux";
 const validationSchema = yup.object({
@@ -119,7 +118,6 @@ function Category(props) {
   const getRowNodeId = (data) => data.id;
   return (
     <div>
-      <Toaster />
       <div className="hor">
         <h2 style={{ marginRight: "20px", flex: "1" }}>Category</h2>
         <div className="hor createCategory">

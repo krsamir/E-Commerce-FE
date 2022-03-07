@@ -7,7 +7,6 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import axios from "axios";
-import { Toaster } from "react-hot-toast";
 import { successToast, errorToast } from "../../Redux/Actions/ToastActions";
 import { connect } from "react-redux";
 function ForgotPassword(props) {
@@ -119,7 +118,6 @@ function ForgotPassword(props) {
       <Button variant="text" onClick={handleClickOpen}>
         Forgot Password ?
       </Button>
-      <Toaster />
       <Dialog
         open={open}
         onClose={handleCloseEvent}
