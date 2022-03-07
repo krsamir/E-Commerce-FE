@@ -39,3 +39,15 @@
 .detepickerLabel {
   font-size: 0.9rem;
 }
+
+.displayImage {
+  height: 450px;
+  width: 450px;
+  border-radius: 15px;
+}
+.left,
+.right {
+  font-size: 40px;
+  margin: 0px 25px;
+  cursor: pointer;
+}
