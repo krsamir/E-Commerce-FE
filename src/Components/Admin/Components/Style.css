@@ -8,3 +8,34 @@
   height: 50px;
   margin: 30px 0px;
 }
+
+.datepickers {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 5px;
+  border-color: #ebebeb;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  outline: #43b049;
+}
+
+.error {
+  color: #d32f2f;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 400;
+  font-size: 0.75rem;
+  line-height: 1.66;
+  letter-spacing: 0.03333em;
+  text-align: left;
+  margin-top: 3px;
+  margin-right: 14px;
+  margin-bottom: 0;
+  margin-left: 14px;
+}
+
+.detepickerLabel {
+  font-size: 0.9rem;
+}

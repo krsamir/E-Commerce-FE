@@ -52,7 +52,11 @@ function Products(props) {
     { headerName: "Total Stocks", field: "totalstocks", width: 120 },
     { headerName: "Offer Price", field: "offerprice", width: 120 },
     { headerName: "Actual Price", field: "actualprice", width: 150 },
-    { headerName: "Keep in stock till", field: "keepinstocktill" },
+    {
+      headerName: "Keep in stock till",
+      field: "keepinstocktill",
+      valueGetter: (params) => params.data.keepinstocktill ?? "Always",
+    },
     {
       headerName: "Is Active",
       field: "isActive",
