@@ -8,9 +8,8 @@ import {
   FormGroup,
   FormControlLabel,
   Checkbox,
+  IconButton,
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import { successToast, errorToast } from "../../../Redux/Actions/ToastActions";
 import { styled } from "@mui/material/styles";
 import { connect } from "react-redux";
@@ -26,6 +25,7 @@ import ErrorIcon from "@mui/icons-material/Error";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import DeleteIcon from "@mui/icons-material/HighlightOff";
 const date = new Date();
 const todayMinusOne = new Date(date.setDate(date.getDate() - 1)).toISOString();
 const validationSchema = yup.object({
@@ -83,9 +83,6 @@ function a11yProps(index) {
 }
 
 function CreateProduct(props) {
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-
   const [categories, setCategories] = useState({
     productId: null,
     category: [],
@@ -117,7 +114,7 @@ function CreateProduct(props) {
           props.errorToast("Issues while Fetching category.");
         });
     };
-    // getCategories()
+    getCategories();
     return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -168,6 +165,7 @@ function CreateProduct(props) {
         })),
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const formik = useFormik({
@@ -195,6 +193,7 @@ function CreateProduct(props) {
       console.log(categories);
       setTabValue(1);
       props.successToast("Testing toast");
+      setCategories({ ...categories, productId: 5 });
       //   await axios
       //     .post("/product/category", values)
       //     .then((res) => {
@@ -236,13 +235,28 @@ function CreateProduct(props) {
 
   const handleCategoriesChange = (e) => {
     console.log(e);
-    setCategories({ ...categories, category: e });
+    setCategories({
+      ...categories,
+      category: e,
+      productId: categories.productId,
+    });
+    console.log(categories);
   };
-  const [tabValue, setTabValue] = React.useState(1);
+  const [tabValue, setTabValue] = React.useState(0);
 
-  const handleChangeTab = (event, newValue) => {
-    console.log(newValue);
-    setTabValue(newValue);
+  const handleChangeTab = async (event, newValue) => {
+    formik.setFieldTouched("name");
+    formik.setFieldTouched("actualprice");
+    formik.setFieldTouched("totalstocks");
+    const data = await formik.validateForm();
+    if (Object.keys(data).length !== 0) {
+      props.errorToast("Please remove all the errors first!");
+    } else if (!categories.productId) {
+      props.errorToast("Please save the product first");
+    } else {
+      setTabValue(newValue);
+    }
+    console.log(data);
   };
 
   /**
@@ -266,9 +280,13 @@ function CreateProduct(props) {
     //   );
     // }
   };
+  const [counter, setCounter] = useState(0);
   const ImageUrl = images.map((image) => URL.createObjectURL(image));
   const removeData = (i) => {
     const value = [...images];
+    if (i === value.length - 1) {
+      setCounter((prevState) => prevState - 1);
+    }
     value.splice(i, 1);
     setImages(value);
   };
@@ -276,8 +294,6 @@ function CreateProduct(props) {
   /**
    * Creating Image Box
    */
-
-  const [counter, setCounter] = useState(0);
 
   return (
     <div>
@@ -290,7 +306,6 @@ function CreateProduct(props) {
           >
             <Tab label="Product Details" {...a11yProps(0)} />
             <Tab label="Images & Categories" {...a11yProps(1)} />
-            <Tab label="Categories" {...a11yProps(2)} />
           </Tabs>
         </Box>
         <TabPanel value={tabValue} index={0}>
@@ -551,35 +566,51 @@ function CreateProduct(props) {
                   </Button>
                 </label>
               </Grid>
-              <Grid item xs={12} sm={12}>
-                <div className="counter hor">
-                  {counter}
-                  <div> Of </div>
-                  {ImageUrl.length}
+              <Grid item xs={12} sm={12} md={2}>
+                <div className="leftCounter">
+                  {counter > 0 && (
+                    <IconButton
+                      size="large"
+                      aria-label="Left"
+                      color="primary"
+                      onClick={() => setCounter((prevState) => prevState - 1)}
+                    >
+                      <ChevronLeftIcon className="left" />
+                    </IconButton>
+                  )}
                 </div>
-
-                {ImageUrl.length > 0 && (
-                  <div className="hor">
-                    {counter > 0 && (
-                      <ChevronLeftIcon
-                        className="left"
-                        onClick={() => setCounter((prevState) => prevState - 1)}
+              </Grid>
+              <Grid item xs={12} sm={12} md={8}>
+                <div className="imageBox">
+                  {ImageUrl.length > 0 && (
+                    <div className="imagesmallbox">
+                      <img
+                        src={ImageUrl[counter]}
+                        className="displayImage pointer"
+                        alt=""
                       />
-                    )}
-                    <img
-                      src={ImageUrl[counter]}
-                      className="displayImage pointer"
-                      alt=""
-                      onClick={() => removeData(counter)}
-                    />
-                    {counter < ImageUrl.length - 1 && (
-                      <ChevronRightIcon
-                        className="right"
-                        onClick={() => setCounter((prevState) => prevState + 1)}
-                      />
-                    )}
-                  </div>
-                )}
+                      {ImageUrl.length > 0 && (
+                        <div className="counter hor">
+                          <div className="hor" style={{ flex: 1 }}>
+                            {counter + 1}
+                            {"  "}
+                            <div> Of </div>
+                            {"  "}
+                            <span>{ImageUrl.length}</span>
+                          </div>
+                          <IconButton
+                            size="large"
+                            aria-label="Left"
+                            color="primary"
+                            onClick={() => removeData(counter)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
                 {/* {images
                   .map((image) => URL.createObjectURL(image))
                   .map((value, index) => {
@@ -595,6 +626,20 @@ function CreateProduct(props) {
                     );
                   })} */}
               </Grid>
+              <Grid item xs={12} sm={12} md={2}>
+                <div className="rightCounter">
+                  {counter < ImageUrl.length - 1 && (
+                    <IconButton
+                      size="large"
+                      aria-label="Left"
+                      color="primary"
+                      onClick={() => setCounter((prevState) => prevState + 1)}
+                    >
+                      <ChevronRightIcon className="right" />
+                    </IconButton>
+                  )}
+                </div>
+              </Grid>
               <Grid item xs={12} sm={12}>
                 <div
                   style={{
@@ -608,7 +653,7 @@ function CreateProduct(props) {
                     onClick={() =>
                       props.history.push({
                         pathname: "/admin/home/products",
-                        state: "",
+                        state: null,
                       })
                     }
                   >
@@ -625,10 +670,6 @@ function CreateProduct(props) {
               </Grid>
             </Grid>
           </div>
-        </TabPanel>
-        <TabPanel value={tabValue} index={2}>
-          Item Three
-          {JSON.stringify(tabValue)}
         </TabPanel>
       </Box>
     </div>

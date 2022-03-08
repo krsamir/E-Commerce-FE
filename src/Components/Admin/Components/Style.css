@@ -51,3 +51,29 @@
   margin: 0px 25px;
   cursor: pointer;
 }
+.imageBox {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  width: 100%;
+  margin-top: 50px;
+}
+
+.leftCounter,
+.rightCounter {
+  top: 50%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.imagesmallbox {
+  display: flex;
+  flex-direction: column;
+}
+
+.counter {
+  justify-content: center;
+  margin-top: 20px;
+  font-weight: 600;
+}
