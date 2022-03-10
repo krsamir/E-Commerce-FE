@@ -15,7 +15,8 @@ function App() {
     typography: {},
     palette: {
       primary: {
-        main: "#43b049",
+        // main: "#43b049",#cef43f
+        main: "#0e406a",
         contrastText: "#fff",
       },
       // secondary: {
