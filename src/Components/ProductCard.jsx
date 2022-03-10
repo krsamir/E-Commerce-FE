@@ -17,7 +17,7 @@ function ProductCard(props) {
       actualprice,
       //   totalstocks,
       //   Categories,
-      //   Images,
+      Images,
       productCode,
     },
   } = props;
@@ -29,7 +29,13 @@ function ProductCard(props) {
     <div>
       <div className="productCard">
         <img
-          src={noimage}
+          src={
+            Images.length === 0
+              ? noimage
+              : Images[0].data === null
+              ? noimage
+              : `data:image/*;base64,${Images[0].data}`
+          }
           alt={name}
           loading="lazy"
           className="cardImage pointer"
