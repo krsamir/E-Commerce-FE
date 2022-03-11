@@ -21,7 +21,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function ProfileImage(props) {
+export default function ProductImages(props) {
   const { productId, imageData } = props;
   const [open, setOpen] = useState(false);
   const [images, setImages] = useState([]);
@@ -60,7 +60,7 @@ export default function ProfileImage(props) {
     images.map((_, i) => formData.append("myFile[]", images[i]));
     formData.append("ProductId", productId);
     await axios
-      .post("/product/images/profile", formData)
+      .post("/product/images/all", formData)
       .then((res) => {
         props.successToast(res.data.message, 2000);
       })
@@ -74,7 +74,7 @@ export default function ProfileImage(props) {
     <div>
       <Button variant="contained" component="span" onClick={handleClickOpen}>
         <UploadFileIcon />
-        {"  "}Upload Profile Image
+        {"  "}Upload Product Images
       </Button>
       <Dialog
         fullScreen
@@ -93,7 +93,7 @@ export default function ProfileImage(props) {
               <CloseIcon />
             </IconButton>
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              Add Product Profile Image
+              Add Product Images
             </Typography>
             <Button autoFocus color="inherit" onClick={handleClose}>
               save
@@ -101,7 +101,6 @@ export default function ProfileImage(props) {
           </Toolbar>
         </AppBar>
         <div>
-          {/* <div > */}
           <label
             htmlFor="contained-button-file"
             className="imageUploadBox pointer"
@@ -113,16 +112,12 @@ export default function ProfileImage(props) {
               name="myFile[]"
               accept="image/*"
               id="contained-button-file"
-              multiple={false}
+              multiple
               type="file"
               encType="multipart/form-data"
               onChange={handleUploadImages}
               hidden
             />
-            {/* <Button variant="contained" component="span">
-                <UploadFileIcon />
-                {"  "}Upload Product Images
-              </Button> */}
           </label>
           <div className="storedImage">
             {imageData.map(({ file, data }) => (
@@ -135,7 +130,6 @@ export default function ProfileImage(props) {
               />
             ))}
           </div>
-          {/* </div> */}
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={2}>
               <div className="leftCounter">

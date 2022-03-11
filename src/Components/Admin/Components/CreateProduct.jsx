@@ -21,6 +21,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import ErrorIcon from "@mui/icons-material/Error";
 import ProfileImage from "./Modals/ProfileImage";
+import ProductImages from "./Modals/ProductImages";
 const date = new Date();
 const todayMinusOne = new Date(date.setDate(date.getDate() - 1)).toISOString();
 const validationSchema = yup.object({
@@ -81,6 +82,7 @@ function CreateProduct(props) {
   const [categories, setCategories] = useState([]);
   const [productId, setProductId] = useState(null);
   const [categoriesMaster, setCategoriesMaster] = useState([]);
+  const [parsedImages, setParsedImages] = useState({ all: [], profile: [] });
 
   useEffect(() => {
     const getCategories = () => {
@@ -147,6 +149,7 @@ function CreateProduct(props) {
         }))
       );
       setProductId(id);
+      getImages(id);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -195,6 +198,7 @@ function CreateProduct(props) {
           props.successToast(res.data.message);
           // setCategories({ ...categories, productId: res.data.data.id });
           setProductId(res.data.data.id);
+          getImages(res.data.data.id);
           setTabValue(1);
         }
       })
@@ -202,6 +206,15 @@ function CreateProduct(props) {
         props.errorToast("Some issue while creating the product.");
         console.log(e);
       });
+  };
+
+  const getImages = async (id) => {
+    await axios
+      .get(`/product/images/${id}`)
+      .then((res) => {
+        setParsedImages(res.data);
+      })
+      .catch((e) => console.log(e));
   };
 
   const updateProducts = async (values) => {
@@ -272,7 +285,7 @@ function CreateProduct(props) {
         console.log(e);
       });
   };
-  const [tabValue, setTabValue] = React.useState(0);
+  const [tabValue, setTabValue] = React.useState(1);
 
   const handleChangeTab = async (event, newValue) => {
     formik.setFieldTouched("name");
@@ -557,8 +570,19 @@ function CreateProduct(props) {
                   isClearable={false}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <ProfileImage {...props} productId={productId} />
+              <Grid item xs={12} sm={12}>
+                <ProfileImage
+                  {...props}
+                  productId={productId}
+                  imageData={parsedImages.profile}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12}>
+                <ProductImages
+                  {...props}
+                  productId={productId}
+                  imageData={parsedImages.all}
+                />
               </Grid>
             </Grid>
           </div>
