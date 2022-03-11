@@ -96,7 +96,7 @@ export default function ProfileImage(props) {
               Add Product Profile Image
             </Typography>
             <Button autoFocus color="inherit" onClick={handleClose}>
-              save
+              Close
             </Button>
           </Toolbar>
         </AppBar>
@@ -125,13 +125,13 @@ export default function ProfileImage(props) {
               </Button> */}
           </label>
           <div className="storedImage">
-            {imageData.map(({ file, data }) => (
+            {imageData.map(({ file, data, id }) => (
               <img
                 key={file}
                 src={`data:image/*;base64,${data}`}
                 alt={file}
                 loading="lazy"
-                className="displayImage"
+                className="demoImages"
               />
             ))}
           </div>
@@ -222,6 +222,7 @@ export default function ProfileImage(props) {
             >
               <Button
                 variant="contained"
+                style={{ marginRight: "20px", marginBottom: "20px" }}
                 onClick={() =>
                   props.history.push({
                     pathname: "/admin/home/products",
@@ -229,15 +230,17 @@ export default function ProfileImage(props) {
                   })
                 }
               >
-                Cancel
+                Redirect to Product Home
               </Button>
-              <Button
-                variant="contained"
-                style={{ marginLeft: "20px" }}
-                onClick={handleSaveImages}
-              >
-                Save Images
-              </Button>
+              {ImageUrl.length > 0 && (
+                <Button
+                  variant="contained"
+                  style={{ marginLeft: "20px" }}
+                  onClick={handleSaveImages}
+                >
+                  Save Images
+                </Button>
+              )}
             </div>
           </Grid>
         </div>

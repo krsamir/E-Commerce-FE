@@ -96,7 +96,7 @@ export default function ProductImages(props) {
               Add Product Images
             </Typography>
             <Button autoFocus color="inherit" onClick={handleClose}>
-              save
+              Close
             </Button>
           </Toolbar>
         </AppBar>
@@ -120,13 +120,13 @@ export default function ProductImages(props) {
             />
           </label>
           <div className="storedImage">
-            {imageData.map(({ file, data }) => (
+            {imageData.map(({ file, data, id }) => (
               <img
                 key={file}
                 src={`data:image/*;base64,${data}`}
                 alt={file}
                 loading="lazy"
-                className="displayImage"
+                className="demoImages"
               />
             ))}
           </div>
@@ -215,6 +215,7 @@ export default function ProductImages(props) {
               }}
             >
               <Button
+                style={{ marginRight: "20px", marginBottom: "20px" }}
                 variant="contained"
                 onClick={() =>
                   props.history.push({
@@ -223,15 +224,17 @@ export default function ProductImages(props) {
                   })
                 }
               >
-                Cancel
+                Redirect to Product Home
               </Button>
-              <Button
-                variant="contained"
-                style={{ marginLeft: "20px" }}
-                onClick={handleSaveImages}
-              >
-                Save Images
-              </Button>
+              {ImageUrl.length > 0 && (
+                <Button
+                  variant="contained"
+                  style={{ marginLeft: "20px" }}
+                  onClick={handleSaveImages}
+                >
+                  Save Images
+                </Button>
+              )}
             </div>
           </Grid>
         </div>
