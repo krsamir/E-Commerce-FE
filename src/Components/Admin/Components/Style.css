@@ -77,3 +77,19 @@
   margin-top: 20px;
   font-weight: 600;
 }
+
+.imageUploadBox {
+  margin: 10px;
+  padding: 25px 100px;
+  border: 2px dashed #0e406a;
+  border-radius: 10px;
+  width: 30%;
+  display: flex;
+  justify-content: center;
+}
+.innerBox {
+  display: flex;
+}
+.uploadIcon {
+  font-size: 50px;
+}

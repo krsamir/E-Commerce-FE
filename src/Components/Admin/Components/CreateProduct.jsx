@@ -8,10 +8,8 @@ import {
   FormGroup,
   FormControlLabel,
   Checkbox,
-  IconButton,
 } from "@mui/material";
 import { successToast, errorToast } from "../../../Redux/Actions/ToastActions";
-import { styled } from "@mui/material/styles";
 import { connect } from "react-redux";
 import axios from "axios";
 import Select from "react-select";
@@ -22,10 +20,7 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import ErrorIcon from "@mui/icons-material/Error";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import DeleteIcon from "@mui/icons-material/HighlightOff";
+import ProfileImage from "./Modals/ProfileImage";
 const date = new Date();
 const todayMinusOne = new Date(date.setDate(date.getDate() - 1)).toISOString();
 const validationSchema = yup.object({
@@ -83,15 +78,9 @@ function a11yProps(index) {
 }
 
 function CreateProduct(props) {
-  const [categories, setCategories] = useState({
-    productId: null,
-    category: [],
-  });
-  const Input = styled("input")({
-    display: "none",
-  });
+  const [categories, setCategories] = useState([]);
+  const [productId, setProductId] = useState(null);
   const [categoriesMaster, setCategoriesMaster] = useState([]);
-  const [images, setImages] = useState([]);
 
   useEffect(() => {
     const getCategories = () => {
@@ -116,12 +105,6 @@ function CreateProduct(props) {
     };
     getCategories();
     return () => {};
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  useEffect(() => {
-    return () => {
-      images.map((value) => URL.revokeObjectURL(value));
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -156,14 +139,14 @@ function CreateProduct(props) {
       formik.setFieldValue("productCode", productCode, true);
       formik.setFieldValue("totalstocks", totalstocks, true);
       formik.setFieldValue("name", name, true);
-      setCategories({
-        productId: id,
-        category: Categories.map(({ id, name }) => ({
+      setCategories(
+        Categories.map(({ id, name }) => ({
           value: name,
           label: name,
           id,
-        })),
-      });
+        }))
+      );
+      setProductId(id);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -185,62 +168,109 @@ function CreateProduct(props) {
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      console.log({
-        ...values,
-        keepinstocktill:
-          values.keepinstocktill === "" ? null : values.keepinstocktill,
-      });
-      console.log(categories);
-      setTabValue(1);
-      props.successToast("Testing toast");
-      setCategories({ ...categories, productId: 5 });
-      //   await axios
-      //     .post("/product/category", values)
-      //     .then((res) => {
-      //       if (res.data.status === 0) {
-      //         toast.error(res.data.message, {
-      //           duration: 6000,
-      //           style: {
-      //             borderRadius: "10px",
-      //             background: "#333",
-      //             color: "#fff",
-      //           },
-      //         });
-      //       }
-      //       if (res.data.status === 1) {
-      //         toast.success(res.data.message, {
-      //           duration: 6000,
-      //           style: {
-      //             borderRadius: "10px",
-      //           },
-      //         });
-      //         gridApi?.applyTransaction({ add: [res.data.data] });
-      //         formik.resetForm();
-      //         handleClose();
-      //       }
-      //     })
-      //     .catch((e) => {
-      //       toast.error("Issues while Creating category.", {
-      //         duration: 6000,
-      //         style: {
-      //           borderRadius: "10px",
-      //           background: "#333",
-      //           color: "#fff",
-      //         },
-      //       });
-      //       console.log(e);
-      //     });
+      if (values.id === "") {
+        createProduct({
+          ...values,
+          keepinstocktill:
+            values.keepinstocktill === "" ? null : values.keepinstocktill,
+        });
+      } else {
+        updateProducts({
+          ...values,
+          keepinstocktill:
+            values.keepinstocktill === "" ? null : values.keepinstocktill,
+        });
+      }
     },
   });
 
-  const handleCategoriesChange = (e) => {
-    console.log(e);
-    setCategories({
-      ...categories,
-      category: e,
-      productId: categories.productId,
-    });
-    console.log(categories);
+  const createProduct = async (values) => {
+    await axios
+      .post("/product/create", values)
+      .then((res) => {
+        if (res.data.status === 0) {
+          props.errorToast(res.data.message);
+        }
+        if (res.data.status === 1) {
+          props.successToast(res.data.message);
+          // setCategories({ ...categories, productId: res.data.data.id });
+          setProductId(res.data.data.id);
+          setTabValue(1);
+        }
+      })
+      .catch((e) => {
+        props.errorToast("Some issue while creating the product.");
+        console.log(e);
+      });
+  };
+
+  const updateProducts = async (values) => {
+    await axios
+      .put("/product/update", values)
+      .then((res) => {
+        if (res.data.status === 0) {
+          props.errorToast(res.data.message);
+        }
+        if (res.data.status === 1) {
+          props.successToast(res.data.message);
+          setTabValue(1);
+        }
+      })
+      .catch((e) => {
+        props.errorToast("Some issue while updating the product.");
+        console.log(e);
+      });
+  };
+
+  const handleCategoriesChange = (e, actionType) => {
+    setCategories(e);
+    if (actionType.action === "select-option") {
+      createCategories({
+        ProductId: productId,
+        CategoryId: actionType.option.id,
+      });
+    }
+    if (
+      actionType.action === "remove-value" ||
+      actionType.action === "pop-value"
+    ) {
+      deleteCategories({
+        ProductId: productId,
+        CategoryId: actionType.removedValue.id,
+      });
+    }
+  };
+
+  const createCategories = async (data) => {
+    await axios
+      .post("/product/createProCat", data)
+      .then((res) => {
+        if (res.data.status === 1) {
+          props.successToast(res.data.message);
+        } else {
+          props.errorToast(res.data.message);
+        }
+      })
+      .catch((e) => {
+        props.errorToast("Some issue while adding category to this product.");
+        console.log(e);
+      });
+  };
+
+  const deleteCategories = async (data) => {
+    await axios
+      .post("/product/deleteProCat", data)
+      .then((res) => {
+        if (res.data.status === 1) {
+          props.successToast(res.data.message);
+        } else {
+          props.errorToast(res.data.message);
+        }
+      })
+      .catch((e) => {
+        props.errorToast("Some issue while adding category to this product.");
+        console.log(e);
+      });
   };
   const [tabValue, setTabValue] = React.useState(0);
 
@@ -251,45 +281,16 @@ function CreateProduct(props) {
     const data = await formik.validateForm();
     if (Object.keys(data).length !== 0) {
       props.errorToast("Please remove all the errors first!");
-    } else if (!categories.productId) {
+    } else if (productId === null) {
       props.errorToast("Please save the product first");
     } else {
       setTabValue(newValue);
     }
-    console.log(data);
   };
 
   /**
    * Handling Images
    */
-  const handleUploadImages = (e) => {
-    const values = [...images];
-    setImages(values.concat(Array.from(e.target.files)));
-  };
-  const handleSaveImages = () => {
-    props.successToast("Uploading Images", 2000);
-    console.log(images);
-    const formData = new FormData();
-    images.map((_, i) => formData.append("images[]", images[i]));
-    console.log(formData);
-    // const file = [];
-    // for (let i = 0; i < images.length; i++) {
-    //   file[i] = new File(
-    //     [images[i]],
-    //     `${data.postId}+${Date.now()}+${images[i].name}`
-    //   );
-    // }
-  };
-  const [counter, setCounter] = useState(0);
-  const ImageUrl = images.map((image) => URL.createObjectURL(image));
-  const removeData = (i) => {
-    const value = [...images];
-    if (i === value.length - 1) {
-      setCounter((prevState) => prevState - 1);
-    }
-    value.splice(i, 1);
-    setImages(value);
-  };
 
   /**
    * Creating Image Box
@@ -410,41 +411,47 @@ function CreateProduct(props) {
                     helperText={formik.touched.color && formik.errors.color}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6} md={4} lg={3}>
-                  <TextField
-                    fullWidth
-                    variant="outlined"
-                    id="itemsold"
-                    name="itemsold"
-                    label="Item Sold"
-                    value={formik.values.itemsold}
-                    onChange={formik.handleChange}
-                    error={
-                      formik.touched.itemsold && Boolean(formik.errors.itemsold)
-                    }
-                    helperText={
-                      formik.touched.itemsold && formik.errors.itemsold
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6} md={4} lg={3}>
-                  <TextField
-                    fullWidth
-                    variant="outlined"
-                    id="productCode"
-                    name="productCode"
-                    label="Product Code"
-                    value={formik.values.productCode}
-                    onChange={formik.handleChange}
-                    error={
-                      formik.touched.productCode &&
-                      Boolean(formik.errors.productCode)
-                    }
-                    helperText={
-                      formik.touched.productCode && formik.errors.productCode
-                    }
-                  />
-                </Grid>
+                {formik.values.id !== "" && (
+                  <Grid item xs={12} sm={6} md={4} lg={3}>
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      id="itemsold"
+                      name="itemsold"
+                      label="Item Sold"
+                      value={formik.values.itemsold}
+                      onChange={formik.handleChange}
+                      error={
+                        formik.touched.itemsold &&
+                        Boolean(formik.errors.itemsold)
+                      }
+                      helperText={
+                        formik.touched.itemsold && formik.errors.itemsold
+                      }
+                    />
+                  </Grid>
+                )}
+                {formik.values.id !== "" && (
+                  <Grid item xs={12} sm={6} md={4} lg={3}>
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      id="productCode"
+                      name="productCode"
+                      label="Product Code"
+                      value={formik.values.productCode}
+                      onChange={formik.handleChange}
+                      error={
+                        formik.touched.productCode &&
+                        Boolean(formik.errors.productCode)
+                      }
+                      helperText={
+                        formik.touched.productCode && formik.errors.productCode
+                      }
+                      disabled={true}
+                    />
+                  </Grid>
+                )}
                 <Grid item xs={12} sm={12} md={12} lg={12}>
                   <TextField
                     fullWidth
@@ -479,7 +486,7 @@ function CreateProduct(props) {
                     className="datepickers"
                     min={new Date().toISOString().split("T")[0]}
                   />
-                  <div className="error" style={{ color: "#43b049" }}>
+                  <div className="error" style={{ color: "#0e406a" }}>
                     <ErrorIcon style={{ paddingTop: "5px" }} />
                     <span>
                       Keep the field empty to keep product in stock forever.
@@ -543,130 +550,15 @@ function CreateProduct(props) {
               <Grid item xs={12} sm={6}>
                 <Select
                   options={categoriesMaster}
-                  value={categories.category}
+                  value={categories}
                   isMulti={true}
                   isSearchable={true}
                   onChange={handleCategoriesChange}
+                  isClearable={false}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <label htmlFor="contained-button-file">
-                  <Input
-                    name="myFile[]"
-                    accept="image/*"
-                    id="contained-button-file"
-                    multiple
-                    type="file"
-                    encType="multipart/form-data"
-                    onChange={handleUploadImages}
-                  />
-                  <Button variant="contained" component="span">
-                    <UploadFileIcon />
-                    {"  "}Upload Product Images
-                  </Button>
-                </label>
-              </Grid>
-              <Grid item xs={12} sm={12} md={2}>
-                <div className="leftCounter">
-                  {counter > 0 && (
-                    <IconButton
-                      size="large"
-                      aria-label="Left"
-                      color="primary"
-                      onClick={() => setCounter((prevState) => prevState - 1)}
-                    >
-                      <ChevronLeftIcon className="left" />
-                    </IconButton>
-                  )}
-                </div>
-              </Grid>
-              <Grid item xs={12} sm={12} md={8}>
-                <div className="imageBox">
-                  {ImageUrl.length > 0 && (
-                    <div className="imagesmallbox">
-                      <img
-                        src={ImageUrl[counter]}
-                        className="displayImage pointer"
-                        alt=""
-                      />
-                      {ImageUrl.length > 0 && (
-                        <div className="counter hor">
-                          <div className="hor" style={{ flex: 1 }}>
-                            {counter + 1}
-                            {"  "}
-                            <div> Of </div>
-                            {"  "}
-                            <span>{ImageUrl.length}</span>
-                          </div>
-                          <IconButton
-                            size="large"
-                            aria-label="Left"
-                            color="primary"
-                            onClick={() => removeData(counter)}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-                {/* {images
-                  .map((image) => URL.createObjectURL(image))
-                  .map((value, index) => {
-                    return (
-                      <div key={index}>
-                        <img
-                          src={value}
-                          className="displayImage pointer"
-                          alt=""
-                          onClick={() => removeData(index)}
-                        />
-                      </div>
-                    );
-                  })} */}
-              </Grid>
-              <Grid item xs={12} sm={12} md={2}>
-                <div className="rightCounter">
-                  {counter < ImageUrl.length - 1 && (
-                    <IconButton
-                      size="large"
-                      aria-label="Left"
-                      color="primary"
-                      onClick={() => setCounter((prevState) => prevState + 1)}
-                    >
-                      <ChevronRightIcon className="right" />
-                    </IconButton>
-                  )}
-                </div>
-              </Grid>
-              <Grid item xs={12} sm={12}>
-                <div
-                  style={{
-                    marginTop: "20px",
-                    display: "flex",
-                    justifyContent: "flex-end",
-                  }}
-                >
-                  <Button
-                    variant="contained"
-                    onClick={() =>
-                      props.history.push({
-                        pathname: "/admin/home/products",
-                        state: null,
-                      })
-                    }
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    variant="contained"
-                    style={{ marginLeft: "20px" }}
-                    onClick={handleSaveImages}
-                  >
-                    Save Images
-                  </Button>
-                </div>
+                <ProfileImage {...props} productId={productId} />
               </Grid>
             </Grid>
           </div>
