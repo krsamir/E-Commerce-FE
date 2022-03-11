@@ -285,7 +285,7 @@ function CreateProduct(props) {
         console.log(e);
       });
   };
-  const [tabValue, setTabValue] = React.useState(1);
+  const [tabValue, setTabValue] = React.useState(0);
 
   const handleChangeTab = async (event, newValue) => {
     formik.setFieldTouched("name");

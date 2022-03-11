@@ -11,6 +11,7 @@ const Verification = lazy(() =>
 );
 const AdminLogin = lazy(() => import("./Components/Login-Register/AdminLogin"));
 const AdminHome = lazy(() => import("./Components/Admin/Main"));
+const SingleProductPage = lazy(() => import("./Components/SingleProductPage"));
 
 function Routes() {
   return (
@@ -24,6 +25,7 @@ function Routes() {
               hasAuthority={[AppConstant.ROLE.USER]}
             />
             <Route path="/" component={Home} exact />
+            <Route path="/product/:id" component={SingleProductPage} exact />
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
             <Route path="/verify" component={Verification} />
