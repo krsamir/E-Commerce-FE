@@ -64,3 +64,87 @@
   font-weight: 600;
   font-size: 16px;
 }
+
+.singleProduct {
+  margin-top: 50px;
+}
+.bigCard {
+  box-shadow: 0px 0px 5px #000;
+  border-radius: 15px;
+}
+.productTag {
+  width: 100%;
+  object-fit: cover;
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
+  height: 400px;
+}
+
+.product__left {
+  height: 400px;
+}
+.product__right {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.circle {
+  border-radius: 2px;
+  width: 25px;
+  height: 15px;
+  margin-left: 10px;
+  margin-top: 5px;
+}
+
+.toasts {
+  background-color: #ebebeb;
+  padding: 5px 10px;
+  margin: 5px;
+  border-radius: 15px;
+}
+
+.product__name {
+  font-size: 23px;
+  font-weight: 700;
+}
+
+.product__description {
+  margin-top: 20px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.title {
+  font-weight: 600;
+}
+
+.line {
+  line-height: 1.5em;
+  margin-top: 20px;
+  margin-bottom: 50px;
+}
+.buttonSet {
+  width: 100%;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.button1,
+.button2 {
+  width: 50%;
+  padding: 20px 0;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.button1 {
+  background-color: #4cd47c;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+.button2 {
+  background-color: #43b049;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
