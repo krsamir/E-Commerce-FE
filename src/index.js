@@ -16,6 +16,15 @@ axios.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+axios.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    window.localStorage.clear();
+    return Promise.reject(error);
+  }
+);
 ReactDOM.render(
   <React.StrictMode>
     <App />
