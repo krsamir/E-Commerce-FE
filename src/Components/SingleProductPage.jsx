@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useRouteMatch } from "react-router-dom";
-import { Grid } from "@mui/material";
+import { Grid, IconButton } from "@mui/material";
 import axios from "axios";
 import noimage from "../Images/image.jpg";
 import "./Style.css";
 import NavBar from "./NavBar";
 import { connect } from "react-redux";
 import { errorToast } from "../Redux/Actions/ToastActions";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+
 function SingleProductPage(props) {
   const {
     params: { id },
   } = useRouteMatch();
 
   const [data, setData] = useState(null);
+  const [counter, setCounter] = useState(0);
   useEffect(() => {
     const getObjectByID = async () => {
       await axios
@@ -46,21 +50,17 @@ function SingleProductPage(props) {
         <div className="singleProduct">
           <Grid container spacing={2} justifyContent="center">
             <Grid item xs={8}>
-              {/* <div>{JSON.stringify(data)}</div> */}
               <div className="bigCard">
                 <Grid container>
                   <Grid item xs={12} sm={5} md={5}>
-                    <div className="product__left">
+                    <div className="product__left hor">
                       {Images.length > 0 ? (
-                        Images.map(({ data, file }, index) => (
-                          <img
-                            key={index}
-                            src={`data:image/*;base64,${data}`}
-                            alt={file}
-                            loading="lazy"
-                            className="productTag"
-                          />
-                        ))
+                        <img
+                          src={`data:image/*;base64,${Images[counter].data}`}
+                          alt={Images[counter].file}
+                          loading="lazy"
+                          className="productTag"
+                        />
                       ) : (
                         <img
                           src={noimage}
@@ -73,7 +73,43 @@ function SingleProductPage(props) {
                   </Grid>
                   <Grid item xs={12} sm={7} md={7}>
                     <div className="product__right">
-                      <div className="product__name">{name}</div>
+                      <div className="hor">
+                        <div className="product__name">{name}</div>
+                        <div className="leftCounterProduct">
+                          {
+                            <IconButton
+                              size="large"
+                              aria-label="Left"
+                              color="primary"
+                              disabled={counter <= 0}
+                              onClick={() => {
+                                if (counter > 0) {
+                                  setCounter((prevState) => prevState - 1);
+                                }
+                              }}
+                            >
+                              <ChevronLeftIcon className="left" />
+                            </IconButton>
+                          }
+                        </div>
+                        <div className="rightCounterProduct">
+                          {
+                            <IconButton
+                              size="large"
+                              aria-label="Left"
+                              color="primary"
+                              disabled={counter >= Images.length - 1}
+                              onClick={() => {
+                                if (counter < Images.length - 1) {
+                                  setCounter((prevState) => prevState + 1);
+                                }
+                              }}
+                            >
+                              <ChevronRightIcon className="right" />
+                            </IconButton>
+                          }
+                        </div>
+                      </div>
                       <div className="product__description">{description}</div>
                       <div className="line">
                         <div className="hor">

@@ -62,7 +62,15 @@ export default function ProfileImage(props) {
     await axios
       .post("/product/images/profile", formData)
       .then((res) => {
-        props.successToast(res.data.message, 2000);
+        if (res.data.status === 1) {
+          props.successToast(res.data.message, 2000);
+          setOpen(false);
+          setTimeout(() => {
+            props.history.push("/admin/home/products");
+          }, 500);
+        } else if (res.data.status === 0) {
+          props.errorToast(res.data.message);
+        }
       })
       .catch((e) => {
         console.log(e);
@@ -124,6 +132,9 @@ export default function ProfileImage(props) {
                 {"  "}Upload Product Images
               </Button> */}
           </label>
+          {imageData.length > 0 && (
+            <h3>&nbsp;&nbsp;&nbsp;&nbsp;Saved Images</h3>
+          )}
           <div className="storedImage">
             {imageData.map(({ file, data, id }) => (
               <img
@@ -152,6 +163,7 @@ export default function ProfileImage(props) {
               </div>
             </Grid>
             <Grid item xs={12} sm={12} md={8}>
+              {ImageUrl.length > 0 && <h3>Uploaded Images</h3>}
               <div className="imageBox">
                 {ImageUrl.length > 0 && (
                   <div className="imagesmallbox">
