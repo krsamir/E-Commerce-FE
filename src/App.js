@@ -4,6 +4,7 @@ import "./App.css";
 import Routes from "./Routes.jsx";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Toaster } from "react-hot-toast";
+import LoginModal from "./Components/LoginModal.jsx";
 function App() {
   if (process.env.NODE_ENV === "production") {
     window.console.log = () => {};
@@ -31,6 +32,7 @@ function App() {
         <ThemeProvider theme={theme}>
           <Routes />
           <Toaster />
+          <LoginModal />
         </ThemeProvider>
       </Provider>
     </div>

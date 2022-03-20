@@ -6,11 +6,12 @@ import noimage from "../Images/image.jpg";
 import "./Style.css";
 import NavBar from "./NavBar";
 import { connect } from "react-redux";
-import { errorToast } from "../Redux/Actions/ToastActions";
+import { errorToast, successToast } from "../Redux/Actions/ToastActions";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-
+import { openModal } from "../Redux/Actions/LoginAction";
 function SingleProductPage(props) {
+  // console.log(props.modal);
   const {
     params: { id },
   } = useRouteMatch();
@@ -30,7 +31,13 @@ function SingleProductPage(props) {
         });
     };
     getObjectByID();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  const isLoggedIn = () => {
+    const sidToken = window.localStorage.getItem("sid");
+    return !(sidToken === null || sidToken === "" || sidToken === undefined);
+  };
 
   if (data) {
     const {
@@ -128,7 +135,7 @@ function SingleProductPage(props) {
                           <span>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             {Number(
-                              (offerprice / actualprice) * 100
+                              ((actualprice - offerprice) / actualprice) * 100
                             ).toPrecision(4)}
                             % off
                           </span>
@@ -157,7 +164,18 @@ function SingleProductPage(props) {
                       )}
                       <div className="buttonSet hor">
                         <div className="button1">Add to cart</div>
-                        <div className="button2">Buy Now</div>
+                        <div
+                          className="button2"
+                          onClick={() => {
+                            if (!isLoggedIn()) {
+                              props.openModal();
+                            } else {
+                              props.successToast("Added To Cart");
+                            }
+                          }}
+                        >
+                          Buy Now
+                        </div>
                       </div>
                     </div>
                   </Grid>
@@ -171,10 +189,16 @@ function SingleProductPage(props) {
   } else {
     return (
       <div>
-        <h2>Sorry! No Product Found</h2>
+        <h2>Loading ...</h2>
       </div>
     );
   }
 }
-
-export default connect(null, { errorToast })(SingleProductPage);
+const mapStateToProps = (state) => ({
+  modal: state.account.modalState,
+});
+export default connect(mapStateToProps, {
+  errorToast,
+  successToast,
+  openModal,
+})(SingleProductPage);

@@ -56,7 +56,10 @@ function ProductCard(props) {
               <strike>{actualprice}</strike>
               <span>
                 &nbsp;&nbsp;&nbsp;
-                {Number((offerprice / actualprice) * 100).toPrecision(4)} % off
+                {Number(
+                  ((actualprice - offerprice) / actualprice) * 100
+                ).toPrecision(4)}{" "}
+                % off
               </span>
             </div>
           </div>
