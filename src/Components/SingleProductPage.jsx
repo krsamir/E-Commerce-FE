@@ -9,13 +9,12 @@ import { connect } from "react-redux";
 import { errorToast, successToast } from "../Redux/Actions/ToastActions";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { openModal } from "../Redux/Actions/LoginAction";
+import { openModal, closeModal } from "../Redux/Actions/LoginAction";
+
 function SingleProductPage(props) {
-  // console.log(props.modal);
   const {
     params: { id },
   } = useRouteMatch();
-
   const [data, setData] = useState(null);
   const [counter, setCounter] = useState(0);
   useEffect(() => {
@@ -170,6 +169,7 @@ function SingleProductPage(props) {
                             if (!isLoggedIn()) {
                               props.openModal();
                             } else {
+                              props.closeModal();
                               props.successToast("Added To Cart");
                             }
                           }}
@@ -189,7 +189,7 @@ function SingleProductPage(props) {
   } else {
     return (
       <div>
-        <h2>Loading ...</h2>
+        <h1>Loading ...</h1>
       </div>
     );
   }
@@ -201,4 +201,5 @@ export default connect(mapStateToProps, {
   errorToast,
   successToast,
   openModal,
+  closeModal,
 })(SingleProductPage);
