@@ -3,7 +3,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import { connect, useFormik } from "formik";
+import { useFormik } from "formik";
 import * as yup from "yup";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
@@ -15,6 +15,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { successToast, errorToast } from "../../Redux/Actions/ToastActions";
+import { connect } from "react-redux";
 
 const validationSchema = yup.object({
   name: yup.string().required("Name is mandatory field."),

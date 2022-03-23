@@ -5,7 +5,7 @@ import ProductCard from "./ProductCard";
 import "./Style.css";
 function Products(props) {
   const [pageNumber, setPageNumber] = useState(1);
-  const { loading, data, error, hasMore } = useProductScroll(pageNumber);
+  const { loading, data, hasMore } = useProductScroll(pageNumber);
 
   const observer = useRef();
   const lastBookElementRef = useCallback(

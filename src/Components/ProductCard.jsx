@@ -49,7 +49,7 @@ function ProductCard(props) {
               {name}
             </div>
             <div className="priceOffer">
-              Price:
+              Price:&nbsp;
               <span>{offerprice}</span>
               {"  "}
               <strike>{actualprice}</strike>

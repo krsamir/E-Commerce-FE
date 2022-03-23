@@ -126,7 +126,7 @@ function SingleProductPage(props) {
                           ></div>
                         </div>
                         <div className="hor">
-                          <span className="title">Price: </span>
+                          <span className="title">Price:&nbsp; </span>
                           <span>
                             {offerprice} {"  "}
                             <strike>{actualprice}</strike>
@@ -140,7 +140,7 @@ function SingleProductPage(props) {
                           </span>
                         </div>
                         <div className="hor">
-                          <span className="title">Material: </span>
+                          <span className="title">Material:&nbsp; </span>
                           <span>{material}</span>
                         </div>
                         <div className="hor">
