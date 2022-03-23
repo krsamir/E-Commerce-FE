@@ -48,7 +48,7 @@ function Products(props) {
             );
           }
         })}
-        <div>{loading && "Loading..."}</div>
+        <div>{loading && <h2>Loading...</h2>}</div>
         {/* <div>{error && "Error"}</div> */}
       </Grid>
     </div>

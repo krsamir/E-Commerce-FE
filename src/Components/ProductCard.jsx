@@ -22,7 +22,6 @@ function ProductCard(props) {
     },
   } = props;
   const redirectToProductPage = (productCode) => {
-    console.log(productCode);
     props.history.push(`/product/${productCode}`);
   };
   return (

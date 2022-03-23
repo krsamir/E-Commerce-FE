@@ -158,24 +158,40 @@ function SingleProductPage(props) {
                         </div>
                       </div>
 
-                      {totalstocks < 4 && (
+                      {totalstocks < 4 && totalstocks > 0 && (
                         <div>Hurry! only {totalstocks} items left.</div>
                       )}
+                      {totalstocks === 0 && <div>No stocks left.</div>}
                       <div className="buttonSet hor">
-                        <div className="button1">Add to cart</div>
                         <div
-                          className="button2"
-                          onClick={() => {
-                            if (!isLoggedIn()) {
-                              props.openModal();
-                            } else {
-                              props.closeModal();
-                              props.successToast("Added To Cart");
-                            }
-                          }}
+                          className="button1"
+                          style={
+                            totalstocks === 0
+                              ? {
+                                  width: "100%",
+                                  borderTopRightRadius: "5px",
+                                  borderBottomRightRadius: "5px",
+                                }
+                              : { width: "50%" }
+                          }
                         >
-                          Buy Now
+                          Add to cart
                         </div>
+                        {totalstocks > 0 && (
+                          <div
+                            className="button2"
+                            onClick={() => {
+                              if (!isLoggedIn()) {
+                                props.openModal();
+                              } else {
+                                props.closeModal();
+                                props.successToast("Added To Cart");
+                              }
+                            }}
+                          >
+                            Buy Now
+                          </div>
+                        )}
                       </div>
                     </div>
                   </Grid>

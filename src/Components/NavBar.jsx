@@ -215,7 +215,7 @@ function NavBar(props) {
             sx={{ display: { xs: "none", sm: "block" } }}
             onClick={redirectToHome}
           >
-            MUI
+            My Store
           </Typography>
           <Search>
             <SearchIconWrapper>
