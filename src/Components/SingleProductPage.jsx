@@ -177,7 +177,7 @@ function SingleProductPage(props) {
                         >
                           Add to cart
                         </div>
-                        {totalstocks > 0 && (
+                        {(totalstocks > 0 || totalstocks === "instock") && (
                           <div
                             className="button2"
                             onClick={() => {
