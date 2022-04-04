@@ -5,6 +5,7 @@ import { TextField, Grid, Button } from "@mui/material";
 import { connect } from "react-redux";
 import { closeModal } from "../Redux/Actions/LoginAction";
 import { successToast, errorToast } from "../Redux/Actions/ToastActions";
+import { getCart } from "../Redux/Actions/ProductActions";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import "./Style.css";
@@ -36,12 +37,18 @@ function LoginModal(props) {
           window.localStorage.setItem("sid", token);
           window.localStorage.setItem("rid", rid);
           props.closeModal();
+          props.getCart();
         }
       })
       .catch((e) => {
         console.log(e);
         props.errorToast("Some issue while logging you in!!");
       });
+  };
+  const handleKeyPress = (e) => {
+    if (e.charCode === 13) {
+      handleSubmit();
+    }
   };
   return (
     <Dialog
@@ -62,6 +69,7 @@ function LoginModal(props) {
               onFocus={() => setDisabled(false)}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onKeyPress={handleKeyPress}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -74,6 +82,7 @@ function LoginModal(props) {
               onFocus={() => setDisabled(false)}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onKeyPress={handleKeyPress}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -101,4 +110,5 @@ export default connect(mapStateToProps, {
   closeModal,
   successToast,
   errorToast,
+  getCart,
 })(LoginModal);

@@ -185,7 +185,7 @@ function SingleProductPage(props) {
                                 props.openModal();
                               } else {
                                 props.closeModal();
-                                props.successToast("Added To Cart");
+                                props.successToast("Item Bought");
                               }
                             }}
                           >

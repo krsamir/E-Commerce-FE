@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -12,10 +12,15 @@ import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import MailIcon from "@mui/icons-material/Mail";
-import NotificationsIcon from "@mui/icons-material/Notifications";
+// import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import Button from "@mui/material/Button";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+// import axios from "axios";
+import { openModal, closeModal } from "../Redux/Actions/LoginAction";
+import { getCart } from "../Redux/Actions/ProductActions";
+import { connect } from "react-redux";
+
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -57,8 +62,25 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 function NavBar(props) {
+  useEffect(() => {
+    const sidToken = window.localStorage.getItem("sid");
+    if (!(sidToken === null || sidToken === "" || sidToken === undefined)) {
+      props.getCart();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const [anchorElCart, setAnchorElCart] = React.useState(null);
+  const openCart = Boolean(anchorElCart);
+
+  const handleClickCart = (event) => {
+    setAnchorElCart(event.currentTarget);
+  };
+  const handleCloseCart = () => {
+    setAnchorElCart(null);
+  };
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -103,11 +125,16 @@ function NavBar(props) {
     handleMenuClose();
   };
 
+  const redirectToCartWindow = () => {
+    props.history.push("/cart");
+  };
+
+  const { cart } = props;
+
   const isLoggedIn = () => {
     const sidToken = window.localStorage.getItem("sid");
     return !(sidToken === null || sidToken === "" || sidToken === undefined);
   };
-
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
@@ -160,14 +187,19 @@ function NavBar(props) {
         </MenuItem>
       )}
       <MenuItem>
-        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="error">
-            <MailIcon />
+        <IconButton
+          size="large"
+          aria-label="show 4 new mails"
+          color="inherit"
+          onClick={() => redirectToCartWindow()}
+        >
+          <Badge badgeContent={cart.count} color="error">
+            <ShoppingCartIcon />
           </Badge>
         </IconButton>
-        <p>Messages</p>
+        <p>Cart</p>
       </MenuItem>
-      <MenuItem>
+      {/* <MenuItem>
         <IconButton
           size="large"
           aria-label="show 25 new notifications"
@@ -178,7 +210,7 @@ function NavBar(props) {
           </Badge>
         </IconButton>
         <p>Notifications</p>
-      </MenuItem>
+      </MenuItem> */}
       <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
           size="large"
@@ -193,7 +225,6 @@ function NavBar(props) {
       </MenuItem>
     </Menu>
   );
-
   return (
     <Box sx={{ flexGrow: 1, paddingTop: "45px" }}>
       <AppBar position="fixed">
@@ -237,16 +268,54 @@ function NavBar(props) {
                 Login
               </Button>
             )}
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorElCart}
+              open={openCart}
+              onClose={handleCloseCart}
+              MenuListProps={{
+                "aria-labelledby": "basic-button",
+              }}
+            >
+              {cart.data.map(
+                ({ name, actualprice, offerprice, productCode }) => {
+                  return (
+                    <MenuItem
+                      key={productCode}
+                      onClick={() => {
+                        handleCloseCart();
+                        props.history.push(`/product/${productCode}`);
+                      }}
+                      sx={{ width: "250px" }}
+                      divider
+                    >
+                      {name}
+                    </MenuItem>
+                  );
+                }
+              )}
+              {cart.count > cart.data.length && cart.data.length >= 4 && (
+                <MenuItem onClick={redirectToCartWindow}>See All...</MenuItem>
+              )}
+              {cart.count === 0 && (
+                <MenuItem onClick={handleCloseCart}>No items.</MenuItem>
+              )}
+            </Menu>
             <IconButton
               size="large"
               aria-label="show 4 new mails"
               color="inherit"
+              onClick={(e) => {
+                isLoggedIn()
+                  ? handleClickCart(e) && props.closeModal()
+                  : props.openModal();
+              }}
             >
-              <Badge badgeContent={4} color="error">
-                <MailIcon />
+              <Badge badgeContent={cart.count} color="error">
+                <ShoppingCartIcon />
               </Badge>
             </IconButton>
-            <IconButton
+            {/* <IconButton
               size="large"
               aria-label="show 25 new notifications"
               color="inherit"
@@ -254,7 +323,7 @@ function NavBar(props) {
               <Badge badgeContent={25} color="error">
                 <NotificationsIcon />
               </Badge>
-            </IconButton>
+            </IconButton> */}
             <IconButton
               size="large"
               edge="end"
@@ -286,4 +355,11 @@ function NavBar(props) {
     </Box>
   );
 }
-export default NavBar;
+const mapStateToProps = (state) => ({
+  cart: state.products.cart,
+});
+export default connect(mapStateToProps, {
+  openModal,
+  closeModal,
+  getCart,
+})(NavBar);
