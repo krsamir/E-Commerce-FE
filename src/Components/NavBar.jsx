@@ -277,8 +277,9 @@ function NavBar(props) {
                 "aria-labelledby": "basic-button",
               }}
             >
-              {cart.data.map(
-                ({ name, actualprice, offerprice, productCode }) => {
+              {cart.data
+                .slice(0, 4)
+                .map(({ name, actualprice, offerprice, productCode }) => {
                   return (
                     <MenuItem
                       key={productCode}
@@ -292,12 +293,13 @@ function NavBar(props) {
                       {name}
                     </MenuItem>
                   );
-                }
-              )}
+                })}
               {cart.count > cart.data.length && cart.data.length >= 4 && (
-                <MenuItem onClick={redirectToCartWindow}>See All...</MenuItem>
+                <MenuItem onClick={redirectToCartWindow}>
+                  view all items
+                </MenuItem>
               )}
-              {cart.count === 0 && (
+              {cart.data.length === 0 && (
                 <MenuItem onClick={handleCloseCart}>No items.</MenuItem>
               )}
             </Menu>

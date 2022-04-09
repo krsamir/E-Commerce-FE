@@ -5,24 +5,19 @@ import noimage from "../Images/image.jpg";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 
 import { successToast, errorToast } from "../Redux/Actions/ToastActions";
+import { openModal, closeModal } from "../Redux/Actions/LoginAction";
+import { addToCart } from "../Redux/Actions/ProductActions";
 import { connect } from "react-redux";
 function ProductCard(props) {
   const {
-    data: {
-      name,
-      //   description,
-      //   color,
-      //   material,
-      offerprice,
-      actualprice,
-      //   totalstocks,
-      //   Categories,
-      Images,
-      productCode,
-    },
+    data: { name, offerprice, actualprice, Images, productCode },
   } = props;
   const redirectToProductPage = (productCode) => {
     props.history.push(`/product/${productCode}`);
+  };
+  const isLoggedIn = () => {
+    const sidToken = window.localStorage.getItem("sid");
+    return !(sidToken === null || sidToken === "" || sidToken === undefined);
   };
   return (
     <div>
@@ -67,7 +62,12 @@ function ProductCard(props) {
             <AddShoppingCartIcon
               className="pointer"
               onClick={() => {
-                props.successToast("Product added to cart Successfully!!");
+                if (!isLoggedIn()) {
+                  props.openModal();
+                } else {
+                  props.closeModal();
+                  props.addToCart(productCode);
+                }
               }}
             />
           </div>
@@ -80,4 +80,7 @@ function ProductCard(props) {
 export default connect(null, {
   successToast,
   errorToast,
+  addToCart,
+  openModal,
+  closeModal,
 })(ProductCard);

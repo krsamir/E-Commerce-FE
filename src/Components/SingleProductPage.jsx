@@ -10,6 +10,7 @@ import { errorToast, successToast } from "../Redux/Actions/ToastActions";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { openModal, closeModal } from "../Redux/Actions/LoginAction";
+import { addToCart } from "../Redux/Actions/ProductActions";
 
 function SingleProductPage(props) {
   const {
@@ -49,6 +50,7 @@ function SingleProductPage(props) {
       name,
       offerprice,
       totalstocks,
+      productCode,
     } = data;
     return (
       <div>
@@ -174,6 +176,14 @@ function SingleProductPage(props) {
                                 }
                               : { width: "50%" }
                           }
+                          onClick={() => {
+                            if (!isLoggedIn()) {
+                              props.openModal();
+                            } else {
+                              props.closeModal();
+                              props.addToCart(productCode);
+                            }
+                          }}
                         >
                           Add to cart
                         </div>
@@ -185,7 +195,7 @@ function SingleProductPage(props) {
                                 props.openModal();
                               } else {
                                 props.closeModal();
-                                props.successToast("Item Bought");
+                                props.history.push("/cart");
                               }
                             }}
                           >
@@ -218,4 +228,5 @@ export default connect(mapStateToProps, {
   successToast,
   openModal,
   closeModal,
+  addToCart,
 })(SingleProductPage);
