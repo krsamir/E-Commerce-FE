@@ -302,6 +302,7 @@ function NavBar(props) {
               {cart.data.length === 0 && (
                 <MenuItem onClick={handleCloseCart}>No items.</MenuItem>
               )}
+              <MenuItem onClick={redirectToCartWindow}>Go to cart...</MenuItem>
             </Menu>
             <IconButton
               size="large"

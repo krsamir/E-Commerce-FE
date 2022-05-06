@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import ProtectedRoute from "./Authentication/ProtectedRoute";
 import { AppConstant } from "./Authentication/Constants";
+import Cart from "./Components/Cart";
 const Home = lazy(() => import("./Components/Home"));
 const Register = lazy(() => import("./Components/Login-Register/Register"));
 const Login = lazy(() => import("./Components/Login-Register/Login"));
@@ -32,6 +33,11 @@ function Routes() {
             <Route path="/admin/login" component={AdminLogin} />
             <Route path="/admin/login" component={AdminLogin} />
             <Route path="/admin/home" component={AdminHome} />
+            <ProtectedRoute
+              path="/cart"
+              component={Cart}
+              hasAuthority={[AppConstant.ROLE.USER]}
+            />
           </Switch>
         </Suspense>
       </Router>
