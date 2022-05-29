@@ -24,6 +24,7 @@ import { Link } from "react-router-dom";
 import ListItemButton from "@mui/material/ListItemButton";
 import Collapse from "@mui/material/Collapse";
 import Storage from "@mui/icons-material/Storage";
+import AcUnitIcon from "@mui/icons-material/AcUnit";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 const drawerWidth = 240;
@@ -115,10 +116,12 @@ export default function AdminMain(props) {
     {
       path: "/admin/home/products",
       name: "Products",
+      icon: <Storage />,
     },
     {
       path: "/admin/home/category",
       name: "Category",
+      icon: <AcUnitIcon />,
     },
   ];
 
@@ -176,7 +179,7 @@ export default function AdminMain(props) {
             {openMaster1 ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
           <Collapse in={openMaster1} timeout="auto" unmountOnExit>
-            {sideBarMenuMasters.map(({ name, path }, ind) => (
+            {sideBarMenuMasters.map(({ name, path, icon }, ind) => (
               <List component="div" disablePadding key={ind}>
                 <Link
                   to={path}
@@ -184,9 +187,7 @@ export default function AdminMain(props) {
                   style={{ textDecoration: "none", color: "black" }}
                 >
                   <ListItemButton sx={{ pl: 4 }}>
-                    <ListItemIcon>
-                      <Storage />
-                    </ListItemIcon>
+                    <ListItemIcon>{icon}</ListItemIcon>
                     <ListItemText primary={name} />
                   </ListItemButton>
                 </Link>
