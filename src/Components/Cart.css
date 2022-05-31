@@ -16,7 +16,7 @@
 .card_image_cart {
   border-top-left-radius: 15px;
   border-bottom-left-radius: 15px;
-  height: 7em;
+  height: 10.6em;
   width: 11em;
 }
 
@@ -32,10 +32,11 @@
 
 .card_right_container {
   border: 1px solid #cabfbf;
-  height: 6.9em;
+  height: 10.5em;
   width: 100%;
   border-top-right-radius: 15px;
   border-bottom-right-radius: 15px;
+  line-height: 2em;
 }
 
 .card_price {
@@ -60,4 +61,34 @@
 .card_name {
   font-weight: 600;
   font-size: 16px;
+}
+
+.item_bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-left: 15px;
+  margin-top: 10px;
+}
+
+.item_input {
+  width: 5em;
+  margin: 10px 14px 7px 14px;
+  outline: none;
+  border: 1px solid #ebebeb;
+  padding: 5px;
+  border-radius: 6px;
+}
+
+.reduce,
+.add {
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+  display: block;
+  border-radius: 50%;
+  background-color: #ebebeb;
+  height: 36px;
+  width: 36px;
+  text-align: center;
 }

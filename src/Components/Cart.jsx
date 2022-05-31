@@ -69,9 +69,18 @@ export default function Cart(props) {
                           </strike>
                           <div className="offer_price">{offerprice}</div>
                         </div>
+                        <div className="item_bar">
+                          <div className="reduce">-</div>
+                          <div className="item_count">
+                            <input type="text" className="item_input" />
+                          </div>
+                          <div className="add">+</div>
+                        </div>
                         <div className="card_name">
                           {stocks === "instock"
                             ? ""
+                            : stocks === 0
+                            ? `Out of stock`
                             : `Hurry only ${stocks} items left!`}
                         </div>
                       </div>
