@@ -67,6 +67,7 @@
 .card_name {
   font-weight: 600;
   font-size: 16px;
+  flex: 1;
 }
 
 .item_bar {
@@ -148,4 +149,9 @@
 .cartEmptyText {
   font-size: 25px;
   font-weight: 700;
+}
+
+.nameHeader {
+  display: flex;
+  flex-direction: row;
 }

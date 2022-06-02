@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Button, Grid } from "@mui/material";
+import { Button, Grid, IconButton, Tooltip } from "@mui/material";
 import "./Cart.css";
 import "./Style.css";
 import noimage from "../Images/image.jpg";
-export default function Cart(props) {
+import DeleteIcon from "@mui/icons-material/Delete";
+import { connect } from "react-redux";
+import { successToast, errorToast } from "../Redux/Actions/ToastActions";
+
+function Cart(props) {
   const [data, setData] = useState([]);
   useEffect(() => {
     const getCarts = async () => {
@@ -20,6 +24,7 @@ export default function Cart(props) {
         })
         .catch((e) => {
           console.log(e);
+          props.errorToast(`Some issue while fetching items from cart.`);
         });
     };
     getCarts();
@@ -57,6 +62,22 @@ export default function Cart(props) {
       100
   ).toPrecision(4);
   const finalDeliveryCharge = checkDeliveryCharge(totalOffer).price;
+
+  const handleRemoveItem = (id, index) => {
+    axios
+      .delete(`/transaction/cart/${id}`)
+      .then((response) => {
+        if (response.data.status === 1) {
+          const item = [...data];
+          item.splice(index, 1);
+          setData(item);
+          props.successToast(response.data.message);
+        } else {
+          props.errorToast(response.data.message);
+        }
+      })
+      .catch((e) => console.log(e));
+  };
   return (
     <div>
       <Grid container spacing={2} className="cart">
@@ -85,6 +106,7 @@ export default function Cart(props) {
                       stocks,
                       image,
                       items,
+                      id,
                     },
                     index
                   ) => (
@@ -106,11 +128,21 @@ export default function Cart(props) {
                       </div>
                       <div className="card_right_container">
                         <div className="card_right">
-                          <div
-                            className="card_name pointer"
-                            onClick={() => redirectToProductPage(productCode)}
-                          >
-                            {name}
+                          <div className="nameHeader">
+                            <div className="card_name">{name}</div>
+                            <Tooltip
+                              title="Remove product from cart"
+                              placement="top-end"
+                            >
+                              <IconButton
+                                edge="start"
+                                color="inherit"
+                                aria-label="close"
+                                onClick={() => handleRemoveItem(id, index)}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Tooltip>
                           </div>
                           <div className="card_price">
                             <strike className="actual_price">
@@ -193,3 +225,5 @@ export default function Cart(props) {
     </div>
   );
 }
+
+export default connect(null, { successToast, errorToast })(Cart);
