@@ -34,7 +34,6 @@ export default function Cart(props) {
     items[index].items = Number(e.target.value);
     setData(items);
   };
-  console.log(data);
   const checkDeliveryCharge = (price) => {
     if (price > 500) {
       return { price: 0, off: "0.0%" };
@@ -50,6 +49,14 @@ export default function Cart(props) {
     (acc, value) => acc + value.offerprice * value.items,
     0
   );
+  const discount = totalActual - totalOffer;
+  const totalFinalAmount = totalOffer + checkDeliveryCharge(totalOffer).price;
+  const totalSavingPercentage = Number(
+    ((totalActual - (totalOffer + checkDeliveryCharge(totalOffer).price)) /
+      totalActual) *
+      100
+  ).toPrecision(4);
+  const finalDeliveryCharge = checkDeliveryCharge(totalOffer).price;
   return (
     <div>
       <Grid container spacing={2} className="cart">
@@ -110,12 +117,6 @@ export default function Cart(props) {
                               {actualprice}
                             </strike>
                             <div className="offer_price">{offerprice}</div>
-                            <div className="offer_price">
-                              {Number(
-                                ((actualprice - offerprice) / actualprice) * 100
-                              ).toPrecision(4)}
-                              %
-                            </div>
                           </div>
                           <div className="item_bar">
                             <div className="reduce">Items :</div>
@@ -171,25 +172,14 @@ export default function Cart(props) {
                 <div className="delivery">
                   Delivery Charges(
                   {checkDeliveryCharge(totalOffer).off}
-                  ): {checkDeliveryCharge(totalOffer).price}
+                  ): {finalDeliveryCharge}
                 </div>
-                <div className="discount">
-                  Discount: {totalActual - totalOffer}
-                </div>
-                <div className="amount">
-                  Total Amount:{" "}
-                  {totalOffer + checkDeliveryCharge(totalOffer).price}
-                </div>
+                <div className="discount">Discount: {discount}</div>
+                <div className="amount">Total Amount: {totalFinalAmount}</div>
               </div>
               <div className="savings">
                 Savings:{" "}
-                {Number(
-                  ((totalActual -
-                    (totalOffer + checkDeliveryCharge(totalOffer).price)) /
-                    totalActual) *
-                    100
-                ).toPrecision(4)}{" "}
-                % off
+                {isNaN(totalSavingPercentage) ? 0 : totalSavingPercentage} % off
               </div>
               <div className="placeOrder">
                 <Button variant="contained" disabled={data.length === 0}>

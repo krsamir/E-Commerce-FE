@@ -16,7 +16,6 @@ export const cart = (state = initialState, action) => {
         count: cart.data.length,
         data: cart.data,
       };
-      console.log(cartData);
       return { ...state, cart: { ...cartData } };
     default:
       return state;
