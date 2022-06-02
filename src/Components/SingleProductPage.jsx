@@ -195,7 +195,10 @@ function SingleProductPage(props) {
                                 props.openModal();
                               } else {
                                 props.closeModal();
-                                props.history.push("/cart");
+                                props.addToCart(productCode);
+                                setTimeout(() => {
+                                  props.history.push("/cart");
+                                }, 1500);
                               }
                             }}
                           >
